@@ -404,22 +404,22 @@ def tile_shift_loglik(m, y, w, tile_ids, shifts=SHIFT, chunk=100):
     return tiles, L, A
 
 
-def _marginal_over_u(F, grid, sigma_u, n_gh=21, shifts=SHIFT, log_space=True):
-    """For each row f_t(s) on the shift grid, return log E_u[exp f_t(b+u)] (log_space) or
-    E_u[f_t(b+u)] for every b in grid, u ~ N(0, sigma_u^2)."""
-    if sigma_u <= 0:
-        out = np.vstack([np.interp(grid, shifts, f) for f in F])
-        return out
-    x, wts = hermegauss(n_gh); wts = wts / wts.sum()
-    out = np.empty((F.shape[0], len(grid)))
-    for t, f in enumerate(F):
-        vals = np.vstack([np.interp(grid + sigma_u * xj, shifts, f) for xj in x])   # (J, G)
+def _marginal_over_u(F, grid, sigma_u, n_gh=None, shifts=SHIFT, log_space=True):
+    """For each row f_t(s) on the (uniform) shift grid, return log E_u[exp f_t(b+u)] (log_space)
+    or E_u[f_t(b+u)] for every b in grid, u ~ N(0, sigma_u^2). The expectation is computed as an
+    exact discrete Gaussian convolution on the fine shift grid; tile log-likelihoods are far too
+    peaked for low-order quadrature."""
+    from scipy.ndimage import gaussian_filter1d
+    F = np.atleast_2d(np.asarray(F, float))
+    if sigma_u > 0:
+        sd = sigma_u / (shifts[1] - shifts[0])
         if log_space:
-            mx = vals.max(0)
-            out[t] = mx + np.log(np.sum(wts[:, None] * np.exp(vals - mx), axis=0))
+            mx = F.max(axis=1, keepdims=True)
+            E = gaussian_filter1d(np.exp(F - mx), sd, axis=1, mode="constant", truncate=6.0)
+            F = np.log(np.maximum(E, 1e-300)) + mx
         else:
-            out[t] = np.sum(wts[:, None] * vals, axis=0)
-    return out
+            F = gaussian_filter1d(F, sd, axis=1, mode="nearest", truncate=6.0)
+    return np.vstack([np.interp(grid, shifts, f) for f in F])
 
 
 def sigma_profile(m, y, w, tid, be, sig_grid=np.arange(0.0, 3.01, 0.25)):
