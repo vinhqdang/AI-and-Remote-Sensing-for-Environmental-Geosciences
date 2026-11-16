@@ -20,6 +20,12 @@ log\_newmark & $\log_{10}(D_N+0.1)$, $D_N$ in cm & GLO-30 + ShakeMap & yes\\
 \bottomrule\end{tabular}
 \end{table}
 
+\subsection{Covariate shift between events}
+\begin{figure*}[h]\centering
+\includegraphics[width=\textwidth]{figS1_covariate_shift.pdf}
+\caption{Distribution of (a) $\log_{10}$PGV, (b) slope and (c) $\log_{10}(D_N+0.1)$ over all domain cells (grey, weighted to the full domain) and over landslide cells (event colour). Thick bars span the interquartile range, thin bars the 5--95\% range, ticks mark medians.}\label{fig:shift}
+\end{figure*}
+
 \subsection{Global logistic regression under low shaking}\label{sec:supp_lr}
 Coefficients of the global LR (predictors $\log_{10}$PGV, slope, $\log_{10}$PGV$\times$slope, relief/100~m) fitted on the eight non-target events were $(-3.14, -0.066, 0.119, -0.74)$ with intercept $-2.17$ when Ays\'en was held out, $(-3.16, -0.173, 0.181, -0.65)$ with intercept $-2.20$ when Cinchona was held out, and $(-0.45, 0.045, 0.042, -0.75)$ with intercept $-6.01$ when Kaik\={o}ura was held out. The derivative of the log-odds with respect to slope, $\beta_{s}+\beta_{sv}\log_{10}\mathrm{PGV}$, becomes negative for PGV below $10^{0.066/0.119}\approx3.6$~cm\,s$^{-1}$ and $10^{0.173/0.181}\approx9.0$~cm\,s$^{-1}$ in the first two fits. The median ShakeMap PGV is 3.95~cm\,s$^{-1}$ over the Ays\'en domain and 10.1~cm\,s$^{-1}$ over the Cinchona domain, compared with 26--55~cm\,s$^{-1}$ in the other events. At Ays\'en, 95.4\% of cells have PGV below the first percentile of the training data.
 

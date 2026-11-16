@@ -25,7 +25,12 @@ Both boosted models used the same fixed hyperparameters (400 trees, depth 4, lea
 \subsection{Proposed algorithm: HiPhyBoost}\label{sec:hiphy}
 The baselines share one structural weakness: they assume that a given combination of terrain and shaking produces the same landslide probability in every earthquake. Experiment~1 (Section~\ref{sec:results}) shows that this assumption is the main reason transfer fails. Events differ by large, unobserved, event-level factors such as antecedent wetness, rock-mass strength, ShakeMap bias and inventory completeness. A pooled model absorbs these differences into its shared response, and a model transferred to a new earthquake carries the wrong base rate with no indication of how wrong it may be. We therefore propose \emph{HiPhyBoost} (hierarchical physics-anchored boosting). It has three components.
 
-\paragraph{(i) Physics-anchored boosting with latent event offsets.} For cell $i$ in event $e(i)$, the log-odds of landsliding are
+\begin{figure*}[t]\centering
+\includegraphics[width=\textwidth]{fig0_workflow.pdf}
+\caption{The HiPhyBoost framework. Open, rapidly available inputs (Copernicus GLO-30 terrain derived from TanDEM-X interferometry, USGS ShakeMap PGA and PGV, and the Newmark sliding-block displacement computed from both) and inventories of past earthquakes are used to fit a model with three additive parts on the log-odds scale: a Newmark anchor $\varphi$, a monotone-constrained boosted residual $g$ and a latent offset $b_e$ for every training event. The parts are estimated by block-coordinate descent. The fitted offsets define an empirical-Bayes prior $b\sim\mathcal{N}(\mu,\tau^2)$. For a new earthquake the model issues a zero-shot forecast with a predictive interval for the landslide total. The forecast is updated as image tiles are mapped, through a posterior for $b$ that corrects for the analysts' choice of tiles in which landslides are visible.}\label{fig:workflow}
+\end{figure*}
+
+Figure~\ref{fig:workflow} summarises the framework. \paragraph{(i) Physics-anchored boosting with latent event offsets.} For cell $i$ in event $e(i)$, the log-odds of landsliding are
 \begin{equation}\label{eq:hiphy}
 \operatorname{logit} p_i \;=\; \varphi(z_i) + g(\mathbf{x}_i) + b_{e(i)}, \qquad \varphi(z)=\alpha+\beta z,\ \ \beta \ge 0,
 \end{equation}
