@@ -83,14 +83,15 @@ def fig_reliability(df):
 def fig_fewshot():
     """E5: few-shot updating, identical tile draws for all methods."""
     r = pd.concat([pd.read_csv(os.path.join(R, "e5_hiphy_fewshot.csv")),
-                   pd.read_csv(os.path.join(R, "e6_fewshot_overdispersed.csv"))], ignore_index=True)
-    meth = ["PC-GBM + intercept recal.", "PC-GBM + Platt recal.", "HiPhyBoost + MLE offset",
-            "HiPhyBoost + Bayes (naive)", "HiPhyBoost + Bayes + overdispersion (no selection term)",
-            "HiPhyBoost (full): selection-aware + overdispersion"]
+                   pd.read_csv(os.path.join(R, "e6_fewshot_overdispersed.csv")),
+                   pd.read_csv(os.path.join(R, "e7_fewshot_quasi.csv"))], ignore_index=True)
+    meth = ["PC-GBM + intercept recal.", "PC-GBM + Platt recal.",
+            "HiPhyBoost + Bayes (naive)", "HiPhyBoost (full): selection-aware + overdispersion",
+            "HiPhyBoost (full): selection-aware quasi-Bayes"]
     lab = {"HiPhyBoost + Bayes (naive)": "HiPhyBoost, cell-level Bayes",
-           "HiPhyBoost + Bayes + overdispersion (no selection term)": "HiPhyBoost, tile-level Bayes, no selection term",
-           "HiPhyBoost (full): selection-aware + overdispersion": "HiPhyBoost (full): tile-level, selection-aware"}
-    c = ["#8c8c8c", "#4e79a7", "#b07aa1", "#f28e2b", "#59a14f", "#e15759"]
+           "HiPhyBoost (full): selection-aware + overdispersion": "HiPhyBoost, tile random effect + selection",
+           "HiPhyBoost (full): selection-aware quasi-Bayes": "HiPhyBoost (full): quasi-Bayes + selection"}
+    c = ["#8c8c8c", "#4e79a7", "#f28e2b", "#59a14f", "#e15759"]
     r["abs_log2_eo"] = np.abs(np.log2(r.e_over_o))
     g = r.groupby(["method", "k", "event"]).agg(auc=("auc", "median"), eo=("abs_log2_eo", "median"),
                                                  cov=("covered", "mean")).reset_index()
@@ -165,9 +166,8 @@ def fig_posterior(target="kaikoura2016", seed=3):
     _, inv = np.unique(X.blocks(ts, 3000), return_inverse=True); inv = inv.reshape(-1)
     pos = np.unique(inv[y == 1])
     import json
-    s_u = json.load(open(os.path.join(R, "e6_sigma_u.json")))[target]["sigma_u"]
-    tiles_all, _, A_all = H.tile_shift_loglik(m, y, w, inv)
-    P0 = H.tile_p0_matrix(A_all, grid, s_u)
+    ph = json.load(open(os.path.join(R, "e7_phi.json")))[target]["phi"]
+    tq = H.tile_q_matrix(m, w, inv, grid)
     rng = np.random.default_rng(seed); order = rng.permutation(pos)
     fig, axs = plt.subplots(1, 2, figsize=(7.1, 2.8))
     prior = np.exp(-0.5 * ((grid - mu) / tau) ** 2); prior /= prior.sum()
@@ -179,10 +179,11 @@ def fig_posterior(target="kaikoura2016", seed=3):
         ch = order[:k]; cal = np.isin(inv, ch)
         LLb, A = H.grid_loglik(m[cal], y[cal], w[cal], inv[cal], grid)
         pn = H.posterior_from_ll(LLb, A, grid, mu, tau, False, True)
-        g2, ps = H.posterior_offset_od(m[cal], y[cal], w[cal], inv[cal], ch, (tiles_all, P0), mu, tau, s_u, grid=grid)
+        lp = (LLb - H.selection_logterm(tq[0], tq[1], ch)) / ph - 0.5 * ((grid - mu) / tau) ** 2
+        ps = np.exp(lp - lp.max()); ps /= ps.sum()
         axs[0].plot(grid, pn / (grid[1] - grid[0]), color=c, lw=1.2, label=f"k = {k}")
         axs[1].plot(grid, ps / (grid[1] - grid[0]), color=c, lw=1.2, label=f"k = {k}")
-    for ax, t in zip(axs, ["(a) Cell-level Bayesian update", f"(b) HiPhyBoost: tile-level, selection-aware (σ_u = {s_u:.2f})"]):
+    for ax, t in zip(axs, ["(a) Cell-level Bayesian update", f"(b) HiPhyBoost: quasi-Bayes, selection-aware (φ = {ph:.0f})"]):
         ax.set_xlim(mu - 4 * tau, mu + 4 * tau); ax.set_xlabel("Event offset $b$ (log-odds)"); ax.set_ylabel("Density")
         ax.set_title(t, loc="left", fontweight="bold", fontsize=7.5)
     axs[0].set_yscale("symlog", linthresh=1); axs[1].set_ylim(0, None)

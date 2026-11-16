@@ -1,0 +1,47 @@
+{
+ "aisen2007": {
+  "phi": 67.76059812173048,
+  "phi_target_oracle": 11.323856941808154,
+  "oracle_offset": 1.8890388671260971
+ },
+ "porgera2018": {
+  "phi": 67.76059812173048,
+  "phi_target_oracle": 22.885342326630838,
+  "oracle_offset": -1.829937578564683
+ },
+ "cinchona2009": {
+  "phi": 46.617704781602384,
+  "phi_target_oracle": 193.44191514770745,
+  "oracle_offset": 3.897856974321556
+ },
+ "kaikoura2016": {
+  "phi": 46.617704781602384,
+  "phi_target_oracle": 89.91436443171612,
+  "oracle_offset": -0.06126776775867794
+ },
+ "denali2002": {
+  "phi": 67.76059812173048,
+  "phi_target_oracle": 7.350276644942197,
+  "oracle_offset": -3.5453809549779844
+ },
+ "niigata2004": {
+  "phi": 46.617704781602384,
+  "phi_target_oracle": 82.72881751363143,
+  "oracle_offset": 2.084132042567253
+ },
+ "palu2018": {
+  "phi": 46.617704781602384,
+  "phi_target_oracle": 80.13181976085178,
+  "oracle_offset": -0.21454010133378734
+ },
+ "iwate2008": {
+  "phi": 67.76059812173048,
+  "phi_target_oracle": 37.84603308059559,
+  "oracle_offset": -0.11131720666832004
+ },
+ "northridge1994": {
+  "phi": 58.988926420723686,
+  "phi_target_oracle": 55.38937648260919,
+  "oracle_offset": 0.7902258007049432
+ }
+}

@@ -1,0 +1,15 @@
+\begin{table*}[t]\centering\small
+\caption{Few-shot updating from $k$ rapidly mapped $3\times3$~km tiles (Experiment~2; identical tile draws for all methods, 30 repetitions per event and $k$). $|\log_2 E/O|$: absolute log$_2$ ratio of predicted to observed landslide cells in the unmapped area (median over events of per-event medians; 1 = a factor of two). Coverage: share of draws in which the 90\% predictive interval contained the observed total (mean over events; nominal 0.90). Width: ratio of the upper to the lower interval bound (median).}\label{tab:fewshot}
+\resizebox{\textwidth}{!}{\begin{tabular}{lrrrrrrrrrr}\toprule
+ & \multicolumn{4}{c}{$|\log_2 E/O|$} & \multicolumn{4}{c}{90\% coverage} & \multicolumn{2}{c}{Width}\\\cmidrule(lr){2-5}\cmidrule(lr){6-9}\cmidrule(lr){10-11}
+Method & $k$=1 & 5 & 10 & 40 & 1 & 5 & 10 & 40 & $k$=1 & 10\\\midrule
+PC-GBM, intercept recalibration & 1.31 & 0.64 & 0.71 & 0.64 & -- & -- & -- & -- & -- & --\\
+PC-GBM, Platt recalibration & 1.37 & 0.69 & 0.68 & 0.67 & -- & -- & -- & -- & -- & --\\
+HiPhyBoost, ML offset & 1.17 & 0.62 & 0.52 & 0.60 & -- & -- & -- & -- & -- & --\\
+HiPhyBoost, cell-level Bayes & 1.14 & 0.64 & 0.52 & 0.60 & 0.26 & 0.19 & 0.16 & 0.04 & 2.3 & 1.2\\
+\quad + selection term & 1.14 & 0.61 & 0.52 & 0.59 & 0.26 & 0.19 & 0.17 & 0.04 & 2.3 & 1.2\\
+HiPhyBoost, tile random effect & 2.57 & 2.26 & 2.27 & 2.38 & 0.79 & 0.44 & 0.20 & 0.00 & 70 & 6.0\\
+\quad + selection term & 2.15 & 1.35 & 1.37 & 1.47 & 0.82 & 0.85 & 0.74 & 0.19 & 114 & 9.2\\
+HiPhyBoost, quasi-Bayes & 0.66 & 0.52 & 0.48 & 0.58 & 0.73 & 0.74 & 0.72 & 0.51 & 58 & 3.7\\
+\quad + selection term (full HiPhyBoost) & 0.68 & 0.53 & 0.48 & 0.58 & 0.73 & 0.74 & 0.72 & 0.54 & 59 & 3.7\\
+\bottomrule\end{tabular}}\end{table*}
