@@ -237,3 +237,4 @@ manuscript/wiley/*.blg
 manuscript/wiley/*.bbl
 manuscript/wiley/*.synctex.gz
 manuscript/wiley/box.eps
+results/hiphy_log.txt

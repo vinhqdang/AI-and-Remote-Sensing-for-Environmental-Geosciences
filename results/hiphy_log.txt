@@ -1,8 +1,0 @@
-events: ['aisen2007', 'cinchona2009', 'denali2002', 'iwate2008', 'kaikoura2016', 'niigata2004', 'northridge1994', 'palu2018', 'porgera2018'] rows: 2322648 T=3 rounds=400 reps=30 out=/home/user/AI-and-Remote-Sensing-for-Environmental-Geosciences/src/../results
-E4 aisen2007 tau=1.814 offsets: {'cinchona2009': 2.63, 'denali2002': -3.15, 'iwate2008': -0.05, 'kaikoura2016': -0.11, 'niigata2004': 1.74, 'northridge1994': 0.73, 'palu2018': -0.18, 'porgera2018': -1.62}
-E4 cinchona2009 tau=1.471 offsets: {'aisen2007': -0.26, 'denali2002': -2.77, 'iwate2008': 0.12, 'kaikoura2016': 0.26, 'niigata2004': 1.95, 'northridge1994': 1.47, 'palu2018': 0.35, 'porgera2018': -1.12}
-E4 denali2002 tau=1.294 offsets: {'aisen2007': -0.37, 'cinchona2009': 2.19, 'iwate2008': -0.43, 'kaikoura2016': -0.5, 'niigata2004': 1.36, 'northridge1994': 0.34, 'palu2018': -0.58, 'porgera2018': -2.01}
-E4 iwate2008 tau=1.877 offsets: {'aisen2007': 0.3, 'cinchona2009': 2.71, 'denali2002': -3.26, 'kaikoura2016': -0.25, 'niigata2004': 1.76, 'northridge1994': 0.7, 'palu2018': -0.25, 'porgera2018': -1.7}
-E4 kaikoura2016 tau=1.751 offsets: {'aisen2007': 0.05, 'cinchona2009': 2.47, 'denali2002': -3.07, 'iwate2008': -0.01, 'niigata2004': 1.71, 'northridge1994': 0.64, 'palu2018': -0.21, 'porgera2018': -1.59}
-E4 niigata2004 tau=1.679 offsets: {'aisen2007': 0.39, 'cinchona2009': 2.8, 'denali2002': -2.97, 'iwate2008': 0.26, 'kaikoura2016': 0.09, 'northridge1994': 0.9, 'palu2018': -0.03, 'porgera2018': -1.44}
-E4 northridge1994 tau=1.746 offsets: {'aisen2007': 0.1, 'cinchona2009': 2.56, 'denali2002': -3.01, 'iwate2008': 0.08, 'kaikoura2016': 0.01, 'niigata2004': 1.84, 'palu2018': -0.08, 'porgera2018': -1.51}
