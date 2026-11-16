@@ -245,3 +245,4 @@ results/e7_parts/
 results/e7_log_*.txt
 results/rev_parts/
 results/rev_log_*.txt
+data/global/cache/
