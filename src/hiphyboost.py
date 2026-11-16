@@ -374,3 +374,108 @@ def _selftest(seed=11, n_per_event=60000, rounds=200, T=2, nreps=60, c0=-5.3, ti
 
 if __name__ == "__main__":
     _selftest()
+
+
+# ---------------------------------------------------------------- tile-level overdispersion
+# Landslides cluster in space beyond what the covariates explain. Treating every 30 m cell of a
+# mapped tile as an independent Bernoulli trial then makes the offset posterior far too narrow.
+# We add a tile random effect u_t ~ N(0, sigma_u^2):  logit p_i = m_i + b + u_{t(i)}, and
+# integrate it out per tile with Gauss-Hermite quadrature, so that the tile becomes the unit of
+# information.
+SHIFT = np.linspace(-30, 30, 2401)
+
+
+def tile_shift_loglik(m, y, w, tile_ids, shifts=SHIFT, chunk=100):
+    """Per-tile log-likelihood L_t(s) = sum_{i in t} w_i [y_i (m_i+s) - log(1+exp(m_i+s))] and
+    per-tile log P(no landslide) A_t(s) = sum_{i in t} w_i log(1-sigma(m_i+s)) on a shift grid."""
+    tiles, tinv = np.unique(np.asarray(tile_ids), return_inverse=True)
+    tinv = tinv.reshape(-1)
+    n = len(m)
+    S = sparse.csr_matrix((np.ones(n), (tinv, np.arange(n))), shape=(len(tiles), n))
+    m = np.asarray(m, float); y = np.asarray(y, float); w = np.asarray(w, float)
+    L = np.empty((len(tiles), len(shifts))); A = np.empty((len(tiles), len(shifts)))
+    wy = S @ (w * y); wym = S @ (w * y * m)
+    for s0 in range(0, len(shifts), chunk):
+        sg = shifts[s0:s0 + chunk]
+        l1m = -np.logaddexp(0, m[:, None] + sg[None, :])
+        a = S @ (w[:, None] * l1m)
+        A[:, s0:s0 + chunk] = a
+        L[:, s0:s0 + chunk] = a + wym[:, None] + wy[:, None] * sg[None, :]
+    return tiles, L, A
+
+
+def _marginal_over_u(F, grid, sigma_u, n_gh=21, shifts=SHIFT, log_space=True):
+    """For each row f_t(s) on the shift grid, return log E_u[exp f_t(b+u)] (log_space) or
+    E_u[f_t(b+u)] for every b in grid, u ~ N(0, sigma_u^2)."""
+    if sigma_u <= 0:
+        out = np.vstack([np.interp(grid, shifts, f) for f in F])
+        return out
+    x, wts = hermegauss(n_gh); wts = wts / wts.sum()
+    out = np.empty((F.shape[0], len(grid)))
+    for t, f in enumerate(F):
+        vals = np.vstack([np.interp(grid + sigma_u * xj, shifts, f) for xj in x])   # (J, G)
+        if log_space:
+            mx = vals.max(0)
+            out[t] = mx + np.log(np.sum(wts[:, None] * np.exp(vals - mx), axis=0))
+        else:
+            out[t] = np.sum(wts[:, None] * vals, axis=0)
+    return out
+
+
+def sigma_profile(m, y, w, tid, be, sig_grid=np.arange(0.0, 3.01, 0.25)):
+    """Marginal log-likelihood of one event's tiles as a function of sigma_u (offset fixed at be)."""
+    _, L, _ = tile_shift_loglik(m, y, w, tid)
+    return np.array([_marginal_over_u(L, np.array([be]), sgm).sum() for sgm in sig_grid])
+
+
+def estimate_sigma_u(events_data, tile=3000.0, sig_grid=np.arange(0.0, 3.01, 0.25)):
+    """Maximum marginal likelihood estimate of the tile effect sd from events with complete
+    inventories. events_data: list of (m, y, w, tile_ids, b_e) with b_e the event offset."""
+    tot = np.zeros(len(sig_grid))
+    for (m, y, w, tid, be) in events_data:
+        tiles, L, _ = tile_shift_loglik(m, y, w, tid)
+        for k, sgm in enumerate(sig_grid):
+            tot[k] += _marginal_over_u(L, np.array([be]), sgm).sum()
+    return float(sig_grid[np.argmax(tot)]), tot
+
+
+def posterior_offset_od(m_cal, y_cal, w_cal, tile_cal, chosen, tileA_all, mu, tau, sigma_u,
+                        grid=np.linspace(-20, 20, 1601), selection_correction=True, prior=True):
+    """Selection-aware posterior of b with tile-level overdispersion.
+    tileA_all = (tiles_all, P0_all) with P0_all = tile_p0_matrix(...) over the whole target domain."""
+    from scipy.special import gammaln
+    _, Lc, _ = tile_shift_loglik(m_cal, y_cal, w_cal, tile_cal)
+    lp = _marginal_over_u(Lc, grid, sigma_u).sum(0)
+    if selection_correction:
+        tiles_all, P0_all = tileA_all          # P0_all[t, g] = E_u[P(no landslide in t | b_g + u)]
+        mask = ~np.isin(tiles_all, np.unique(chosen))
+        P0 = P0_all[mask]
+        k = len(np.unique(chosen))
+        n = k + np.sum(1 - P0, axis=0)
+        lp = lp - (gammaln(n + 1) - gammaln(k + 1) - gammaln(n - k + 1))
+    if prior:
+        lp = lp - 0.5 * ((grid - mu) / max(tau, 1e-6)) ** 2
+    lp -= lp.max(); p = np.exp(lp)
+    return grid, p / p.sum()
+
+
+def predict_od(m, grid, post, sigma_u, n_gh=21):
+    """Predictive probability for unmapped cells: E_{b|C} E_u sigma(m + b + u)."""
+    x, wts = hermegauss(n_gh); wts = wts / wts.sum()
+    keep = post > 1e-10 * post.max(); g, pw = grid[keep], post[keep] / post[keep].sum()
+    shifts = (g[:, None] + sigma_u * x[None, :]).ravel(); ww = (pw[:, None] * wts[None, :]).ravel()
+    order = np.argsort(shifts); shifts, ww = shifts[order], ww[order]
+    # compress the mixing distribution to <= 40 support points (equal-probability bins)
+    if len(shifts) > 40:
+        c = np.cumsum(ww) / ww.sum(); idx = np.minimum((c * 40).astype(int), 39)
+        s2 = np.bincount(idx, weights=shifts * ww, minlength=40); w2 = np.bincount(idx, weights=ww, minlength=40)
+        ok = w2 > 0; shifts, ww = s2[ok] / w2[ok], w2[ok]
+    out = np.empty(len(m))
+    for s0 in range(0, len(m), 50000):
+        out[s0:s0 + 50000] = expit(m[s0:s0 + 50000, None] + shifts[None, :]) @ ww
+    return out
+
+
+def tile_p0_matrix(A_all, grid, sigma_u):
+    """E_u[exp(A_t(b+u))]: probability that tile t holds no landslide, for every grid value b."""
+    return _marginal_over_u(np.exp(np.minimum(A_all, 0)), grid, sigma_u, log_space=False)

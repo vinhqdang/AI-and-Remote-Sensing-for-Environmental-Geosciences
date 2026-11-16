@@ -82,11 +82,15 @@ def fig_reliability(df):
 
 def fig_fewshot():
     """E5: few-shot updating, identical tile draws for all methods."""
-    r = pd.read_csv(os.path.join(R, "e5_hiphy_fewshot.csv"))
+    r = pd.concat([pd.read_csv(os.path.join(R, "e5_hiphy_fewshot.csv")),
+                   pd.read_csv(os.path.join(R, "e6_fewshot_overdispersed.csv"))], ignore_index=True)
     meth = ["PC-GBM + intercept recal.", "PC-GBM + Platt recal.", "HiPhyBoost + MLE offset",
-            "HiPhyBoost + Bayes (naive)", "HiPhyBoost + Bayes (selection-corrected)"]
-    lab = {"HiPhyBoost + Bayes (selection-corrected)": "HiPhyBoost + selection-aware Bayes"}
-    c = ["#8c8c8c", "#4e79a7", "#b07aa1", "#f28e2b", "#e15759"]
+            "HiPhyBoost + Bayes (naive)", "HiPhyBoost + Bayes + overdispersion (no selection term)",
+            "HiPhyBoost (full): selection-aware + overdispersion"]
+    lab = {"HiPhyBoost + Bayes (naive)": "HiPhyBoost, cell-level Bayes",
+           "HiPhyBoost + Bayes + overdispersion (no selection term)": "HiPhyBoost, tile-level Bayes, no selection term",
+           "HiPhyBoost (full): selection-aware + overdispersion": "HiPhyBoost (full): tile-level, selection-aware"}
+    c = ["#8c8c8c", "#4e79a7", "#b07aa1", "#f28e2b", "#59a14f", "#e15759"]
     r["abs_log2_eo"] = np.abs(np.log2(r.e_over_o))
     g = r.groupby(["method", "k", "event"]).agg(auc=("auc", "median"), eo=("abs_log2_eo", "median"),
                                                  cov=("covered", "mean")).reset_index()
@@ -111,7 +115,7 @@ def fig_fewshot():
     axs[1].axhline(1, color="k", lw=0.6, ls=":")
     for a, t in zip(axs, "abc"): a.set_title(f"({t})", loc="left", fontweight="bold")
     h, l = axs[0].get_legend_handles_labels()
-    fig.legend(h, l, ncol=3, loc="upper center", bbox_to_anchor=(0.5, 0.0), frameon=False)
+    fig.legend(h, l, ncol=2, loc="upper center", bbox_to_anchor=(0.5, 0.02), frameon=False, fontsize=7)
     fig.tight_layout()
     save(fig, "fig5_fewshot")
 
@@ -159,7 +163,11 @@ def fig_posterior(target="kaikoura2016", seed=3):
     b_oracle = brentq(lambda b: np.sum(w * (expit(m + b) - y)), -25, 25)
     grid = np.linspace(-20, 20, 1601)
     _, inv = np.unique(X.blocks(ts, 3000), return_inverse=True); inv = inv.reshape(-1)
-    pos = np.unique(inv[y == 1]); tq = H.tile_q_matrix(m, w, inv, grid)
+    pos = np.unique(inv[y == 1])
+    import json
+    s_u = json.load(open(os.path.join(R, "e6_sigma_u.json")))[target]["sigma_u"]
+    tiles_all, _, A_all = H.tile_shift_loglik(m, y, w, inv)
+    P0 = H.tile_p0_matrix(A_all, grid, s_u)
     rng = np.random.default_rng(seed); order = rng.permutation(pos)
     fig, axs = plt.subplots(1, 2, figsize=(7.1, 2.8))
     prior = np.exp(-0.5 * ((grid - mu) / tau) ** 2); prior /= prior.sum()
@@ -171,12 +179,13 @@ def fig_posterior(target="kaikoura2016", seed=3):
         ch = order[:k]; cal = np.isin(inv, ch)
         LLb, A = H.grid_loglik(m[cal], y[cal], w[cal], inv[cal], grid)
         pn = H.posterior_from_ll(LLb, A, grid, mu, tau, False, True)
-        ps = H.posterior_from_ll(LLb, A, grid, mu, tau, True, True, sel_term=H.selection_logterm(tq[0], tq[1], ch))
+        g2, ps = H.posterior_offset_od(m[cal], y[cal], w[cal], inv[cal], ch, (tiles_all, P0), mu, tau, s_u, grid=grid)
         axs[0].plot(grid, pn / (grid[1] - grid[0]), color=c, lw=1.2, label=f"k = {k}")
         axs[1].plot(grid, ps / (grid[1] - grid[0]), color=c, lw=1.2, label=f"k = {k}")
-    for ax, t in zip(axs, ["(a) Naive Bayesian update", "(b) Selection-aware update (HiPhyBoost)"]):
+    for ax, t in zip(axs, ["(a) Cell-level Bayesian update", f"(b) HiPhyBoost: tile-level, selection-aware (σ_u = {s_u:.2f})"]):
         ax.set_xlim(mu - 4 * tau, mu + 4 * tau); ax.set_xlabel("Event offset $b$ (log-odds)"); ax.set_ylabel("Density")
-        ax.set_title(t, loc="left", fontweight="bold", fontsize=8)
+        ax.set_title(t, loc="left", fontweight="bold", fontsize=7.5)
+    axs[0].set_yscale("symlog", linthresh=1); axs[1].set_ylim(0, None)
     axs[1].legend(frameon=False, fontsize=6.5)
     fig.tight_layout(); save(fig, "fig9_posterior_kaikoura")
 
@@ -195,7 +204,7 @@ def fig_maps_multi(events=("northridge1994", "iwate2008", "porgera2018", "palu20
     for j, e in enumerate(events):
         ts = df[df.event == e].reset_index(drop=True); m = sc[sc.event == e].m.values
         o = offs[offs.target == e].iloc[0]
-        p = expit(m[:, None] + o.mu + o.tau * xg[None, :]) @ wg
+        p = expit(m + o.mu)                            # point forecast at the prior median offset
         d = pd.DataFrame({"bx": np.floor(ts.x / s), "by": np.floor(ts.y_utm / s), "pw": p * ts.w, "yw": ts.y * ts.w, "n": ts.w})
         g = d.groupby(["bx", "by"]).sum().reset_index()
         g = g[g.n > 0.3 * (s / 30) ** 2]
@@ -258,7 +267,7 @@ def fig_kaikoura():
         off = pd.read_csv(os.path.join(R, "hiphy_loeo_offsets.csv")); off = off[off.target == "kaikoura2016"].iloc[0]
         xg, wg = hermegauss(40); wg = wg / np.sqrt(2 * np.pi)
         assert len(m) == len(p)
-        p["p_transfer"] = expit(m[:, None] + off.mu + off.tau * xg[None, :]) @ wg
+        p["p_transfer"] = expit(m + off.mu)          # point forecast at the prior median offset
         title_b = "(b) HiPhyBoost zero-shot (8 other events)"
     s = 2000.0
     p["bx"] = np.floor(p.x / s); p["by"] = np.floor(p.y_utm / s)
@@ -268,23 +277,32 @@ def fig_kaikoura():
     g["pred_d"] = g.pred / ((s / 30) ** 2) * 100; g["obs_d"] = g.obs / ((s / 30) ** 2) * 100   # % of cells
     x0, y0 = g.bx.min(), g.by.min()
     nx, ny = int(g.bx.max() - x0 + 1), int(g.by.max() - y0 + 1)
-    fig, axs = plt.subplots(1, 3, figsize=(7.1, 2.9))
+    fig = plt.figure(figsize=(7.1, 3.0))
+    gs = fig.add_gridspec(1, 5, width_ratios=[1, 1, 0.05, 0.75, 1.05], wspace=0.12)
+    axs = [fig.add_subplot(gs[0, 0]), fig.add_subplot(gs[0, 1]), fig.add_subplot(gs[0, 4])]
+    cax = fig.add_subplot(gs[0, 2])
     vmax = np.nanpercentile(g.obs_d[g.obs_d > 0], 99)
-    for ax, col, t in zip(axs[:2], ["obs_d", "pred_d"], ["(a) Observed (GNS inventory v2)", title_b]):
+    ext = [x0 * s / 1e3, (x0 + nx) * s / 1e3, y0 * s / 1e3, (y0 + ny) * s / 1e3]
+    for ax, col, t in zip(axs[:2], ["obs_d", "pred_d"], ["(a) Observed (GNS v2)", title_b.replace(" (8 other events)", "")]):
         A = np.full((ny, nx), np.nan)
         A[(g.by - y0).astype(int), (g.bx - x0).astype(int)] = g[col]
-        im = ax.imshow(np.clip(A, 0.01, None), origin="lower", cmap="magma_r", norm=LogNorm(0.01, vmax),
-                       extent=[x0 * s / 1e3, (x0 + nx) * s / 1e3, y0 * s / 1e3, (y0 + ny) * s / 1e3])
-        ax.set_title(t, loc="left", fontsize=7.5); ax.set_xlabel("Easting (km, UTM 59S)")
-    axs[0].set_ylabel("Northing (km)")
-    cb = fig.colorbar(im, ax=axs[:2], fraction=0.03, pad=0.02); cb.set_label("Landslide cells (% of 2 km cell)")
+        im = ax.imshow(np.clip(A, 0.01, None), origin="lower", cmap="magma_r", norm=LogNorm(0.01, vmax), extent=ext)
+        ax.set_title(t, loc="left", fontsize=7); ax.set_xlabel("Easting (km)")
+        ax.tick_params(labelsize=6.5)
+    axs[0].set_ylabel("Northing (km, UTM 59S)"); axs[1].set_yticklabels([])
+    cb = fig.colorbar(im, cax=cax); cb.set_label("Landslide cells (% of 2 km cell)", fontsize=7); cb.ax.tick_params(labelsize=6.5)
     ok = (g.n > 0.5 * (s / 30) ** 2)
-    axs[2].scatter(np.clip(g.pred_d[ok], 1e-3, None), np.clip(g.obs_d[ok], 1e-3, None), s=3, alpha=0.4, color="#e15759", lw=0)
+    pos = ok & (g.obs_d > 0); zer = ok & (g.obs_d == 0)
+    axs[2].scatter(g.pred_d[pos], g.obs_d[pos], s=3, alpha=0.4, color="#e15759", lw=0)
+    axs[2].scatter(g.pred_d[zer], np.full(zer.sum(), 3e-3), s=3, alpha=0.25, color="0.4", lw=0)
+    axs[2].axhline(6e-3, color="0.7", lw=0.5)
+    axs[2].text(1.2e-3, 3.6e-3, "no landslide", fontsize=6, color="0.3")
     axs[2].plot([1e-3, 100], [1e-3, 100], "k--", lw=0.6)
-    axs[2].set_xscale("log"); axs[2].set_yscale("log"); axs[2].set_xlabel("Predicted (%)"); axs[2].set_ylabel("Observed (%)")
+    axs[2].set_xscale("log"); axs[2].set_yscale("log"); axs[2].set_xlim(1e-3, 100); axs[2].set_ylim(2e-3, 100)
+    axs[2].set_xlabel("Predicted (%)"); axs[2].set_ylabel("Observed (%)")
     from scipy.stats import spearmanr
     rho = spearmanr(g.pred_d[ok], g.obs_d[ok]).correlation
-    axs[2].set_title(f"(c) 2 km cells, Spearman ρ = {rho:.2f}", loc="left", fontsize=7.5)
+    axs[2].set_title(f"(c) 2 km cells, Spearman ρ = {rho:.2f}", loc="left", fontsize=7)
     json.dump(dict(spearman_2km=rho, n_cells=int(ok.sum()), total_pred=float(p.pw.sum()), total_obs=float(p.yw.sum())),
               open(os.path.join(R, "kaikoura_map_stats.json"), "w"), indent=1)
     save(fig, "fig7_kaikoura_transfer")
