@@ -20,7 +20,7 @@ def total_od(m, w, b, sigma_u, n_gh=21):
     return float(np.sum(w * (expit(m[:, None] + b + sigma_u * x[None, :]) @ wt)))
 
 
-def main(reps=30):
+def main(reps=30, only=None):
     df = X.load().reset_index(drop=True)
     events = sorted(df.event.unique())
     sc = pd.read_parquet(os.path.join(R, "hiphy_loeo_scores.parquet"))
@@ -36,8 +36,17 @@ def main(reps=30):
     prof = {e: H.sigma_profile(*data[e], sig_grid=SIG) for e in events}
     print("sigma profiles done", flush=True)
     rng = np.random.default_rng(7)
+    draws = {}
+    for target in events:                      # reproduce the E5 random sequence over all events
+        _, y_, _, inv_, _ = data[target]
+        ub_ = np.unique(inv_); pt_ = np.unique(inv_[y_ == 1])
+        for k in KS:
+            if k >= len(ub_) // 2 or len(pt_) == 0:
+                continue
+            for rep in range(reps):
+                draws[(target, k, rep)] = rng.choice(pt_, min(k, len(pt_)), replace=False)
     rows, sig = [], {}
-    for target in events:
+    for target in (only or events):
         m_all, y, w, inv, b_or = data[target]
         o = offs[offs.target == target].iloc[0]; mu, tau = o.mu, o.tau
         tot = sum(prof[e] for e in events if e != target); s_u = float(SIG[np.argmax(tot)])
@@ -50,7 +59,7 @@ def main(reps=30):
             if k >= len(ub) // 2 or len(pos_tiles) == 0:
                 continue
             for rep in range(reps):
-                chosen = rng.choice(pos_tiles, min(k, len(pos_tiles)), replace=False)
+                chosen = draws[(target, k, rep)]
                 cal = np.isin(inv, chosen); ev = ~cal
                 if y[ev].sum() < 5:
                     continue
@@ -68,9 +77,24 @@ def main(reps=30):
                              b_post_mean=float(np.sum(g * post)), b_oracle=b_or, sigma_u=s_u)
                     rows.append(r)
         print("E6", target, "done", flush=True)
-    pd.DataFrame(rows).to_csv(os.path.join(R, "e6_fewshot_overdispersed.csv"), index=False)
+    tag = "_".join(only) if only else "all"
+    os.makedirs(os.path.join(R, "e6_parts"), exist_ok=True)
+    pd.DataFrame(rows).to_csv(os.path.join(R, "e6_parts", f"e6_{tag}.csv"), index=False)
+    json.dump(sig, open(os.path.join(R, "e6_parts", f"sigma_{tag}.json"), "w"), indent=1)
+
+
+def merge():
+    import glob
+    parts = sorted(glob.glob(os.path.join(R, "e6_parts", "e6_*.csv")))
+    pd.concat([pd.read_csv(f) for f in parts], ignore_index=True).to_csv(os.path.join(R, "e6_fewshot_overdispersed.csv"), index=False)
+    sig = {}
+    for f in sorted(glob.glob(os.path.join(R, "e6_parts", "sigma_*.json"))):
+        sig.update(json.load(open(f)))
     json.dump(sig, open(os.path.join(R, "e6_sigma_u.json"), "w"), indent=1)
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1 and sys.argv[1] == "merge":
+        merge()
+    else:
+        main(only=sys.argv[1:] or None)
