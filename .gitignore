@@ -251,3 +251,4 @@ data/processed_global/*.parquet
 results/global_log_*.txt
 data/global_all/
 results/global_loeo/*.parquet
+results/climsh_log_*.txt

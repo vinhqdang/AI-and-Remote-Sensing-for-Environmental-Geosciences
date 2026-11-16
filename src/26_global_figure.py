@@ -34,10 +34,23 @@ ax = axs[2]
 names = ["M0 unconditional", "F1 shaking (forecast-time)", "F2 climate (forecast-time)", "F3 all forecast-time", "P2 inventory + domain (post-event)"]
 short = ["none", "F1 shaking", "F2 climate", "F3 F1+F2", "P2 post-event"]
 x = np.arange(len(names))
-ax.bar(x, s.loc[names, "width_median"], color=["#bab0ac", "#4e79a7", "#4e79a7", "#4e79a7", "#f28e2b"])
+rr = pd.read_csv(os.path.join(R, "global", "offset_regression.csv"))
+from statsmodels.stats.proportion import proportion_confint
+rng = np.random.default_rng(1)
+wl, wh, cl, ch, cv, wm = [], [], [], [], [], []
+for n in names:
+    g = rr[rr.model == n]
+    k, N = int(g.covered.sum()), len(g); lo, hi = proportion_confint(k, N, alpha=0.05, method="wilson")
+    bw = [np.median(rng.choice(g.width.values, N)) for _ in range(2000)]
+    wm.append(np.median(g.width)); wl.append(np.percentile(bw, 2.5)); wh.append(np.percentile(bw, 97.5))
+    cv.append(k / N); cl.append(lo); ch.append(hi)
+wm, wl, wh, cv, cl, ch = map(np.array, (wm, wl, wh, cv, cl, ch))
+ax.bar(x, wm, yerr=[wm - wl, wh - wm], capsize=2, error_kw=dict(lw=0.6), color=["#bab0ac", "#4e79a7", "#4e79a7", "#4e79a7", "#f28e2b"])
 ax.set_xticks(x); ax.set_xticklabels(short, rotation=35, ha="right"); ax.set_ylabel("Median width of 90% interval (×)")
-ax2 = ax.twinx(); ax2.plot(x, s.loc[names, "coverage"], "o-", color="#e15759"); ax2.set_ylim(0.5, 1.0); ax2.axhline(0.9, color="#e15759", ls=":", lw=0.6)
+ax2 = ax.twinx(); ax2.errorbar(x + 0.12, cv, yerr=[cv - cl, ch - cv], fmt="o-", color="#e15759", capsize=2, lw=1, ms=4)
+ax2.set_ylim(0.5, 1.02); ax2.axhline(0.9, color="#e15759", ls=":", lw=0.6)
 ax2.set_ylabel("Coverage (of 38 events)", color="#e15759"); ax2.spines["right"].set_visible(True)
+pd.DataFrame(dict(model=names, width_median=wm, width_lo=wl, width_hi=wh, coverage=cv, cov_lo=cl, cov_hi=ch)).to_csv(os.path.join(R, "global", "fig11c_intervals.csv"), index=False)
 ax.set_title("(c) Zero-shot prior covariates", loc="left", fontsize=7.5, fontweight="bold")
 fig.tight_layout()
 for ext in ["pdf", "png"]:

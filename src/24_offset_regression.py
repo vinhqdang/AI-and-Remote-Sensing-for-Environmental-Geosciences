@@ -26,6 +26,7 @@ SETS = {
     "F1 shaking (forecast-time)": ["log_stations", "mag", "log_depth", "rev", "normal"],
     "F2 climate (forecast-time)": ["pdsi_prev", "log_ppt_ratio", "log_map"],
     "F3 all forecast-time": ["log_stations", "mag", "log_depth", "rev", "normal", "pdsi_prev", "log_ppt_ratio", "log_map"],
+    "S2 climate over landslide area (sensitivity)": ["pdsi_prev_ls", "log_ppt_ratio_ls", "log_map_ls"],
     "P1 inventory (post-event)": ["point_inventory", "mapping_extent", "year"],
     "P2 inventory + domain (post-event)": ["point_inventory", "mapping_extent", "year", "log_area"],
     "P3 all": ["log_stations", "mag", "log_depth", "rev", "normal", "pdsi_prev", "log_ppt_ratio", "log_map",
@@ -44,8 +45,11 @@ def covariates():
     z["log_area"] = np.log10(pd.Series(area).reindex(c.index).values)
     z["year"] = c.year.astype(float); z["log_stations"] = np.log1p(c.shakemap_stations.clip(lower=0).fillna(0))
     z["mag"] = c.mag; z["log_depth"] = np.log10(c.depth_km.clip(lower=1))
-    z["pdsi_prev"] = c.pdsi_prev.fillna(0); z["log_ppt_ratio"] = np.log(c.ppt_ratio.clip(lower=0.05)).fillna(0)
-    z["log_map"] = np.log10(c.map_mm.clip(lower=50))
+    # climate over the strongly shaken area (forecast-time); landslide-area versions kept for sensitivity
+    z["pdsi_prev"] = c.pdsi_prev_sh.fillna(0); z["log_ppt_ratio"] = np.log(c.ppt_ratio_sh.clip(lower=0.05)).fillna(0)
+    z["log_map"] = np.log10(c.map_mm_sh.clip(lower=50))
+    z["pdsi_prev_ls"] = c.pdsi_prev.fillna(0); z["log_ppt_ratio_ls"] = np.log(c.ppt_ratio.clip(lower=0.05)).fillna(0)
+    z["log_map_ls"] = np.log10(c.map_mm.clip(lower=50))
     z["rev"] = (c.mechanism == "reverse").astype(float); z["normal"] = (c.mechanism == "normal").astype(float)
     return z, c
 
