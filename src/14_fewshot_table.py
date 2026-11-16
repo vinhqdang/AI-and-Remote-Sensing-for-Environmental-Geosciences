@@ -27,3 +27,21 @@ s = ("\\begin{table*}[t]\\centering\\small\n\\caption{Few-shot updating from $k$
      "Method & $k$=1 & 5 & 10 & 40 & 1 & 5 & 10 & 40 & $k$=1 & 10\\\\\\midrule\n" + "\n".join(L) + "\n\\bottomrule\\end{tabular}}\\end{table*}\n")
 open(os.path.join(T, "tab_fewshot.tex"), "w").write(s)
 print(A[A.method.str.contains("quasi|PC-GBM \\+ int")].round(3).to_string())
+
+# Supplementary Table S3: per-event results of full HiPhyBoost updating
+import sys; sys.path.insert(0, os.path.dirname(__file__))
+from events import EVENTS
+e7 = pd.read_csv(os.path.join(R, "e7_fewshot_quasi.csv")); e7 = e7[e7.method.str.contains("full")].copy()
+e7["ale"] = np.abs(np.log2(e7.e_over_o))
+pe = e7.groupby(["event", "k"]).agg(ale=("ale", "median"), cov=("covered", "mean")).reset_index()
+rows = []
+for ev in EVENTS:
+    d = pe[pe.event == ev].set_index("k")
+    lab = EVENTS[ev]["label"].replace("ō", "\\={o}").replace("é", "\\'{e}")
+    cells = [("%.2f" % d.loc[k, "ale"]) if k in d.index else "--" for k in [1, 5, 10, 40]] + \
+            [("%.2f" % d.loc[k, "cov"]) if k in d.index else "--" for k in [1, 5, 10, 40]]
+    rows.append(lab + " & " + " & ".join(cells) + "\\\\")
+s3 = ("\\begin{table}[ht]\\centering\\small\n\\caption{Per-event results of full HiPhyBoost updating (quasi-posterior with selection term): median $|\\log_2 E/O|$ over 30 tile draws and coverage of the 90\\% interval of the landslide total in the unmapped area. Niigata-Chuetsu has too few tiles for $k=40$.}\\label{tab:perevent}\n"
+      "\\begin{tabular}{lrrrrrrrr}\\toprule\n & \\multicolumn{4}{c}{$|\\log_2 E/O|$} & \\multicolumn{4}{c}{90\\% coverage}\\\\\\cmidrule(lr){2-5}\\cmidrule(lr){6-9}\n"
+      "Event & $k$=1 & 5 & 10 & 40 & $k$=1 & 5 & 10 & 40\\\\\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\\end{tabular}\\end{table}\n")
+open(os.path.join(T, "tab_perevent.tex"), "w").write(s3)
