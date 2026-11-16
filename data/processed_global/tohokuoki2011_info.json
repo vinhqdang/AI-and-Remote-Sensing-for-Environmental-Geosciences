@@ -1,0 +1,15 @@
+{
+ "event": "tohokuoki2011",
+ "comcat_id": "official20110311054624120_30",
+ "label": "Tohoku-Oki 2011",
+ "crs": "EPSG:32654",
+ "area_km2": 28933.7418,
+ "n_valid_cells": 32148602,
+ "n_pos_cells": 3375,
+ "n_landslides_inventory": 3475,
+ "prevalence": 0.00010498123682018895,
+ "neg_rate": 0.0033125190749416816,
+ "shakemap_n_stations": 1204,
+ "pga_max": 1.0159846544265747,
+ "geometry_type": "Polygon"
+}

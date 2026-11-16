@@ -1,0 +1,15 @@
+{
+ "event": "lombok2018",
+ "comcat_id": "us1000gda5",
+ "label": "Lombok 2018",
+ "crs": "EPSG:32750",
+ "area_km2": 1797.3252,
+ "n_valid_cells": 1997028,
+ "n_pos_cells": 9265,
+ "n_landslides_inventory": 9319,
+ "prevalence": 0.004639394139691582,
+ "neg_rate": 0.07505568755603849,
+ "shakemap_n_stations": -1,
+ "pga_max": 0.14206761121749878,
+ "geometry_type": "Polygon"
+}

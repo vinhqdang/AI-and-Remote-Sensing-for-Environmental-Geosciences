@@ -1,0 +1,15 @@
+{
+ "event": "pisco2007",
+ "comcat_id": "usp000fjta",
+ "label": "Pisco 2007",
+ "crs": "EPSG:32718",
+ "area_km2": 21651.9219,
+ "n_valid_cells": 24057691,
+ "n_pos_cells": 271,
+ "n_landslides_inventory": 271,
+ "prevalence": 1.1264588941640327e-05,
+ "neg_rate": 0.006235007915940782,
+ "shakemap_n_stations": 13,
+ "pga_max": 0.34549033641815186,
+ "geometry_type": "Point"
+}

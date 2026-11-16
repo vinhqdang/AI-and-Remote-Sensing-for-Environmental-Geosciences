@@ -1,0 +1,15 @@
+{
+ "event": "westernsichuan2013",
+ "comcat_id": "usb000gcdd",
+ "label": "Western Sichuan 2013",
+ "crs": "EPSG:32648",
+ "area_km2": 5490.1728,
+ "n_valid_cells": 6100192,
+ "n_pos_cells": 15278,
+ "n_landslides_inventory": 15546,
+ "prevalence": 0.002504511333413768,
+ "neg_rate": 0.024589486274200986,
+ "shakemap_n_stations": -1,
+ "pga_max": 0.5904485583305359,
+ "geometry_type": "Point"
+}

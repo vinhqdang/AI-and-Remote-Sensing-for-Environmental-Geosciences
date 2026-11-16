@@ -1,0 +1,15 @@
+{
+ "event": "guatemala1976",
+ "comcat_id": "usp0000ex3",
+ "label": "Guatemala 1976",
+ "crs": "EPSG:32615",
+ "area_km2": 5264.8506,
+ "n_valid_cells": 5849834,
+ "n_pos_cells": 6136,
+ "n_landslides_inventory": 6224,
+ "prevalence": 0.0010489186530763094,
+ "neg_rate": 0.025641801057124103,
+ "shakemap_n_stations": 0,
+ "pga_max": 1.0511600971221924,
+ "geometry_type": "Polygon"
+}

@@ -1,0 +1,15 @@
+{
+ "event": "nepal2015",
+ "comcat_id": "us20002926",
+ "label": "Nepal 2015",
+ "crs": "EPSG:32645",
+ "area_km2": 24517.4886,
+ "n_valid_cells": 27241654,
+ "n_pos_cells": 20630,
+ "n_landslides_inventory": 21151,
+ "prevalence": 0.0007572961612389615,
+ "neg_rate": 0.005506274310726669,
+ "shakemap_n_stations": -1,
+ "pga_max": 0.7725309729576111,
+ "geometry_type": "Polygon"
+}

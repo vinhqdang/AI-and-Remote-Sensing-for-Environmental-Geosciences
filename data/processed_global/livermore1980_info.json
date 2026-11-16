@@ -1,0 +1,15 @@
+{
+ "event": "livermore1980",
+ "comcat_id": "nc1050040",
+ "label": "Livermore 1980",
+ "crs": "EPSG:32610",
+ "area_km2": 908.3664,
+ "n_valid_cells": 1009296,
+ "n_pos_cells": 105,
+ "n_landslides_inventory": 105,
+ "prevalence": 0.00010403291006800779,
+ "neg_rate": 0.14861878729512287,
+ "shakemap_n_stations": -1,
+ "pga_max": 0.3956444561481476,
+ "geometry_type": "Point"
+}

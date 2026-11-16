@@ -1,0 +1,15 @@
+{
+ "event": "haiti2010",
+ "comcat_id": "usp000h60h",
+ "label": "Haiti 2010",
+ "crs": "EPSG:32618",
+ "area_km2": 3741.1578,
+ "n_valid_cells": 4156842,
+ "n_pos_cells": 20702,
+ "n_landslides_inventory": 23567,
+ "prevalence": 0.004980222967339148,
+ "neg_rate": 0.03131078533347931,
+ "shakemap_n_stations": 4,
+ "pga_max": 1.4479296207427979,
+ "geometry_type": "Polygon"
+}

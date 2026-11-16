@@ -1,0 +1,15 @@
+{
+ "event": "mammothlakes1980",
+ "comcat_id": "nc1053054",
+ "label": "Mammoth Lakes 1980",
+ "crs": "EPSG:32611",
+ "area_km2": 2410.8111,
+ "n_valid_cells": 2678679,
+ "n_pos_cells": 4024,
+ "n_landslides_inventory": 4027,
+ "prevalence": 0.0015022330036559065,
+ "neg_rate": 0.055997680258021446,
+ "shakemap_n_stations": 0,
+ "pga_max": 0.2842589020729065,
+ "geometry_type": "Polygon"
+}

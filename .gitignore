@@ -246,3 +246,6 @@ results/e7_log_*.txt
 results/rev_parts/
 results/rev_log_*.txt
 data/global/cache/
+data/raw_global/
+data/processed_global/*.parquet
+results/global_log_*.txt

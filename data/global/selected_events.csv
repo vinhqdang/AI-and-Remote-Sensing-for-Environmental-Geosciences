@@ -1,0 +1,30 @@
+key,comcat_id,sb_id,layer,label,mag,n_features,geometry_type,has_mapping_extent,pacific_rim
+livermore1980,nc1050040,5874bdede4b0a829a320bbca,Wilson_and_others_1985,Livermore 1980,5.8,105,Point,False,True
+sanmiguel2001,usp000a7m5,5874cce7e4b0a829a320bbde,GarciaRodríguez_and_Malpica_2010_Jan,San Miguel 2001,7.7,139,Point,False,True
+centralitaly1997,usp000881f,5b6b075ee4b006a11f77930e,CEDIT_6_0_Central_Italy_1997,Central Italy 1997,6.0,179,Point,False,False
+southernitaly1980,usp0001ay4,5b6b2a35e4b006a11f779851,CEDIT_6_9_southern_Italy_1980,Southern Italy 1980,6.9,199,Point,False,False
+visso2016,us1000725y,5b6b1177e4b006a11f7793ea,CEDIT_6_1_Visso_Italy_2016,Visso 2016,6.1,235,Point,False,False
+sansalvador1986,usp0002yu9,5874ccaae4b0a829a320bbd9,Rymer_1987,San Salvador 1986,5.7,268,Point,False,True
+pisco2007,usp000fjta,5b5f3190e4b006a11f66e491,Lacroix_and_others_2013,Pisco 2007,8.0,271,Point,False,True
+lefkada2003,usp000c4tt,5874bc90e4b0a829a320bbaa,Papathanassiou_and_others_2013,Lefkada 2003,6.3,274,Polygon,False,False
+norcia2016,us1000731j,5b6b2201e4b006a11f7795c3,CEDIT_6_6_Norcia_Italy_2016,Norcia 2016 (2016-10-30),6.6,378,Point,False,False
+kiholobay2006,hv5532127,5874bb8de4b0a829a320bb9f,Harp_and_others_2014,Kiholo Bay 2006,6.7,383,Polygon,False,True
+sanfernando1971,ci3347678,5874cc26e4b0a829a320bbd4,Morton_1971,San Fernando 1971,6.6,391,Point,False,True
+milinearthquake2012017,us2000bqsn,5f4d1e9c82ce4c3d12318d43,Hu_and_others_2019,Milin Earthquake 2017,6.4,766,Polygon,False,False
+mesetas2019,us70006qp1,61ead1f5d34e8b818ad9f37f,Delgado_2019,Mesetas 2019,5.7,838,Polygon,True,True
+jueili1998,usp0008rnv,5b5a20eee4b0610d7f4dcc52,Huang_and_Lee_1999,Jueili 1998,5.7,847,Polygon,False,True
+sichuanyunnanguizh2014,usb000rzmg,594428d4e4b062508e32319f,Xu_and_others_2015a,Sichuan-Yunnan-Guizhou Region 2014,6.2,1024,Polygon,False,False
+valledelaestrella11991,usp0004qpg,5874bcc2e4b0a829a320bbaf,Marc_and_others_2016,Valle de la Estrella 1991,7.6,1643,Polygon,False,True
+lomaprieta1989,nc216859,5874bd02e4b0a829a320bbb4,Keefer_and_Manson_1998,Loma Prieta 1989,6.9,1775,Point,False,True
+gansu2013,usb000ije3,59442b04e4b062508e3231af,Xu_and_others_2014a,Gansu 2013,5.9,2330,Polygon,False,False
+kobe1995,usp0006rew,58b538b7e4b01ccd54fddf59,Uchida_and_others_2004,Kobe 1995,6.9,2353,Polygon,True,True
+kashmir2005,usp000e12e,5895dabfe4b0fa1e59bc788f,Basharat_and_others_2016,Kashmir 2005,7.6,2930,Polygon,False,False
+tohokuoki2011,official20110311054624120_30,5874a54be4b0a829a320bb2a,Wartman_and_others_2013_polygons,Tohoku-Oki 2011,9.1,3475,Polygon,False,True
+coalinga1983,nc1091100,5874a164e4b0a829a320bb10,Harp_and_Keefer_1990,Coalinga 1983,6.7,3980,Polygon,False,True
+mammothlakes1980,nc1053054,5874bd42e4b0a829a320bbb9,Harp_1984,Mammoth Lakes 1980,6.1,4027,Polygon,False,True
+guatemala1976,usp0000ex3,5874b3d4e4b0a829a320bb73,Harp_and_others_1981,Guatemala 1976,7.5,6224,Polygon,False,True
+lombok2018,us1000gda5,5ef2514782ced62aaae3bcab,Ferrario_2019a,Lombok 2018,6.9,9319,Polygon,True,True
+westernsichuan2013,usb000gcdd,59442c43e4b062508e3231be,Xu_and_others_2015,Western Sichuan 2013,6.6,15546,Point,False,False
+nepal2015,us20002926,61f040e1d34e8b818adc3251,Valagussa_2021,Nepal 2015,7.8,21151,Polygon,False,False
+haiti2010,usp000h60h,585872dce4b0e40e53c241e1,Harp_and_others_2016,Haiti 2010,7.0,23567,Polygon,False,False
+wenchuan2008,usp000g650,586d7498e4b0f5ce109fc93b,Xu_and_others_2014,Wenchuan 2008,7.9,197481,Polygon,False,False
