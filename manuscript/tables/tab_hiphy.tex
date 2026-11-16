@@ -1,16 +1,16 @@
 \begin{table*}[t]\centering\small
-\caption{Leave-one-event-out transfer of HiPhyBoost. AUC of the transferred PC-GBM, of HiPhyBoost without event offsets (ablation) and of the full HiPhyBoost ($^{*}$: 95\% block-bootstrap interval of the difference from PC-GBM excludes zero); AP lift; ratio of predicted to observed landslide cells for the HiPhyBoost point forecast ($E/O$); 90\% zero-shot predictive interval of $E/O$ and whether it contains 1.}\label{tab:hiphy}
-\resizebox{\textwidth}{!}{\begin{tabular}{lrrrrrrlc}\toprule
- & \multicolumn{3}{c}{AUC} & \multicolumn{2}{c}{AP lift} & & \multicolumn{2}{c}{Zero-shot 90\% interval}\\\cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){8-9}
-Event & PC-GBM & No offsets & HiPhyBoost & PC-GBM & HiPhyBoost & $E/O$ & $E/O$ interval & covers\\\midrule
-Kaik\={o}ura 2016 (NZ) & 0.887 & 0.888 & \textbf{0.917}$^{*}$ & 9.2 & 12.7 & 1.06 & [0.060, 15.9] & yes\\
-Northridge 1994 (USA) & 0.814 & 0.815 & \textbf{0.833}$^{*}$ & 5.0 & 6.1 & 0.46 & [0.026, 7.5] & yes\\
-Niigata-Chuetsu 2004 (JP) & 0.788 & 0.794 & \textbf{0.784} & 3.2 & 3.0 & 0.13 & [0.008, 1.9] & yes\\
-Iwate-Miyagi 2008 (JP) & 0.833 & 0.835 & \textbf{0.834} & 5.6 & 5.4 & 1.12 & [0.052, 19.2] & yes\\
-Ais\'{e}n 2007 (CL) & 0.760 & 0.747 & \textbf{0.734}$^{*}$ & 3.3 & 2.8 & 0.15 & [0.008, 3.0] & yes\\
-Denali 2002 (USA) & 0.805 & 0.810 & \textbf{0.848}$^{*}$ & 3.4 & 4.1 & 33.68 & [4.114, 241.7] & no\\
-Cinchona 2009 (CR) & 0.774 & 0.776 & \textbf{0.760}$^{*}$ & 2.9 & 2.8 & 0.02 & [0.002, 0.2] & no\\
-Porgera 2018 (PNG) & 0.872 & 0.877 & \textbf{0.916}$^{*}$ & 9.1 & 13.0 & 6.12 & [0.396, 79.7] & yes\\
-Palu 2018 (ID) & 0.730 & 0.734 & \textbf{0.780}$^{*}$ & 2.5 & 3.7 & 1.24 & [0.065, 20.9] & yes\\
-\midrule Median & 0.805 & 0.810 & 0.833 & 3.4 & 4.1 & 1.06 & & 7/9\\
+\caption{Leave-one-event-out transfer of HiPhyBoost compared with PC-GBM. AUC of the transferred PC-GBM, of HiPhyBoost without event offsets (ablation) and of the full HiPhyBoost (best of the three in bold; $^{*}$: 95\% spatial block-bootstrap interval of the difference from PC-GBM excludes zero); AP lift; ratio of predicted to observed landslide cells of the point forecasts ($E/O$, ideal 1); HiPhyBoost 90\% zero-shot predictive interval of $E/O$ and whether it contains 1. Across the nine events the AUC difference from PC-GBM is not significant (Wilcoxon signed-rank $p=0.16$).}\label{tab:hiphy}
+\resizebox{\textwidth}{!}{\begin{tabular}{lrrrrrrrlc}\toprule
+ & \multicolumn{3}{c}{AUC} & \multicolumn{2}{c}{AP lift} & \multicolumn{2}{c}{$E/O$} & \multicolumn{2}{c}{Zero-shot 90\% interval}\\\cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}
+Event & PC-GBM & No offsets & HiPhyBoost & PC-GBM & HiPhyBoost & PC-GBM & HiPhyBoost & $E/O$ interval & covers\\\midrule
+Kaik\={o}ura 2016 (NZ) & 0.887 & 0.888 & \textbf{0.917}$^{*}$ & 9.2 & 12.7 & 1.50 & 1.06 & [0.060, 15.9] & yes\\
+Northridge 1994 (USA) & 0.814 & 0.815 & \textbf{0.833}$^{*}$ & 5.0 & 6.1 & 0.94 & 0.46 & [0.026, 7.5] & yes\\
+Niigata-Chuetsu 2004 (JP) & 0.788 & \textbf{0.794} & 0.784 & 3.2 & 3.0 & 0.23 & 0.13 & [0.008, 1.9] & yes\\
+Iwate-Miyagi 2008 (JP) & 0.833 & \textbf{0.835} & 0.834 & 5.6 & 5.4 & 2.58 & 1.12 & [0.052, 19.2] & yes\\
+Ais\'{e}n 2007 (CL) & \textbf{0.760} & 0.747 & 0.734$^{*}$ & 3.3 & 2.8 & 1.11 & 0.15 & [0.008, 3.0] & yes\\
+Denali 2002 (USA) & 0.805 & 0.810 & \textbf{0.848}$^{*}$ & 3.4 & 4.1 & 23.40 & 33.68 & [4.114, 241.7] & no\\
+Cinchona 2009 (CR) & 0.774 & \textbf{0.776} & 0.760$^{*}$ & 2.9 & 2.8 & 0.02 & 0.02 & [0.002, 0.2] & no\\
+Porgera 2018 (PNG) & 0.872 & 0.877 & \textbf{0.916}$^{*}$ & 9.1 & 13.0 & 8.84 & 6.12 & [0.396, 79.7] & yes\\
+Palu 2018 (ID) & 0.730 & 0.734 & \textbf{0.780}$^{*}$ & 2.5 & 3.7 & 1.89 & 1.24 & [0.065, 20.9] & yes\\
+\midrule Median & 0.805 & 0.810 & 0.833 & 3.4 & 4.1 & 1.50 & 1.06 & & 7/9\\
 \bottomrule\end{tabular}}\end{table*}

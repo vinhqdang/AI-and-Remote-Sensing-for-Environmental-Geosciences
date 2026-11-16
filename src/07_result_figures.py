@@ -95,8 +95,8 @@ def fig_fewshot():
     r["abs_log2_eo"] = np.abs(np.log2(r.e_over_o))
     g = r.groupby(["method", "k", "event"]).agg(auc=("auc", "median"), eo=("abs_log2_eo", "median"),
                                                  cov=("covered", "mean")).reset_index()
-    fig, axs = plt.subplots(1, 3, figsize=(7.1, 2.6))
-    panels = [("auc", "ROC AUC (unmapped area)"), ("eo", "|log$_2$(E/O)| (unmapped area)"), ("cov", "90% interval coverage")]
+    fig, axs = plt.subplots(1, 2, figsize=(7.1, 2.8))
+    panels = [("eo", "|log$_2$(E/O)| (unmapped area)"), ("cov", "90% interval coverage")]
     for ax, (m, ylab) in zip(axs, panels):
         for mm, cc in zip(meth, c):
             d = g[g.method == mm]
@@ -112,9 +112,9 @@ def fig_fewshot():
                 ax.fill_between(med.index, lo.values, hi.values, color=cc, alpha=0.12, lw=0)
         ax.set_xscale("log"); ax.set_xlabel("Mapped 3 × 3 km tiles (k)"); ax.set_ylabel(ylab)
         ax.set_xticks([1, 2, 5, 10, 20, 40]); ax.set_xticklabels([1, 2, 5, 10, 20, 40])
-    axs[2].axhline(0.9, color="k", lw=0.6, ls="--"); axs[2].set_ylim(0, 1.02)
-    axs[1].axhline(1, color="k", lw=0.6, ls=":")
-    for a, t in zip(axs, "abc"): a.set_title(f"({t})", loc="left", fontweight="bold")
+    axs[1].axhline(0.9, color="k", lw=0.6, ls="--"); axs[1].set_ylim(0, 1.02)
+    axs[0].axhline(1, color="k", lw=0.6, ls=":")
+    for a, t in zip(axs, "ab"): a.set_title(f"({t})", loc="left", fontweight="bold")
     h, l = axs[0].get_legend_handles_labels()
     fig.legend(h, l, ncol=2, loc="upper center", bbox_to_anchor=(0.5, 0.02), frameon=False, fontsize=7)
     fig.tight_layout()
@@ -146,8 +146,9 @@ def fig_offsets():
     axs[1].axvline(1, color="k", lw=0.6, ls="--"); axs[1].set_xscale("log")
     axs[1].set_xlabel("Predicted / observed landslide cells")
     axs[1].set_title("(b) Zero-shot forecast of landslide total", loc="left", fontweight="bold", fontsize=8)
-    axs[1].legend(frameon=False, fontsize=6.5, loc="lower right")
     fig.tight_layout()
+    h, l = axs[1].get_legend_handles_labels()
+    fig.legend(h, l, frameon=False, fontsize=7, ncol=2, loc="upper center", bbox_to_anchor=(0.7, 0.02))
     save(fig, "fig8_offsets")
 
 

@@ -1,0 +1,146 @@
+{
+ "hiphy_vs_PC-GBM": {
+  "mean": 0.015794210740698606,
+  "median": 0.01935891899313502,
+  "n_pos": 6,
+  "p_wilcoxon": 0.1640625
+ },
+ "hiphy_vs_GBM": {
+  "mean": 0.02451186404396229,
+  "median": 0.02344395883964323,
+  "n_pos": 6,
+  "p_wilcoxon": 0.07421875
+ },
+ "hiphy_vs_Global LR": {
+  "mean": 0.14460352794169784,
+  "median": 0.08348210017102364,
+  "n_pos": 9,
+  "p_wilcoxon": 0.00390625
+ },
+ "hiphy_vs_ablation": {
+  "mean": 0.014603296495085627,
+  "median": 0.01887547972540049,
+  "n_pos": 5,
+  "p_wilcoxon": 0.1640625
+ },
+ "ablation_vs_PC-GBM": {
+  "mean": 0.0011909142456129802,
+  "median": 0.001788958465106405,
+  "n_pos": 8,
+  "p_wilcoxon": 0.12890625
+ },
+ "zeroshot_t": {
+  "coverage": 7,
+  "median_width": 846.3564338933123
+ },
+ "zeroshot_bayes_mean_EO_median": 3.725979462182539,
+ "shap_group_share_GBM": {
+  "Newmark": {
+   "aisen2007": 0.009,
+   "cinchona2009": 0.005,
+   "denali2002": 0.277,
+   "iwate2008": 0.18,
+   "kaikoura2016": 0.172,
+   "niigata2004": 0.137,
+   "northridge1994": 0.015,
+   "palu2018": 0.092,
+   "porgera2018": 0.172
+  },
+  "ground motion": {
+   "aisen2007": 0.287,
+   "cinchona2009": 0.268,
+   "denali2002": 0.286,
+   "iwate2008": 0.244,
+   "kaikoura2016": 0.265,
+   "niigata2004": 0.405,
+   "northridge1994": 0.328,
+   "palu2018": 0.362,
+   "porgera2018": 0.284
+  },
+  "terrain": {
+   "aisen2007": 0.705,
+   "cinchona2009": 0.727,
+   "denali2002": 0.438,
+   "iwate2008": 0.576,
+   "kaikoura2016": 0.563,
+   "niigata2004": 0.457,
+   "northridge1994": 0.657,
+   "palu2018": 0.546,
+   "porgera2018": 0.544
+  }
+ },
+ "shap_group_share_GBM_mean": {
+  "Newmark": 0.118,
+  "ground motion": 0.303,
+  "terrain": 0.579
+ },
+ "shap_group_share_GBM_range": {
+  "Newmark": [
+   0.0048475135,
+   0.2765692
+  ],
+  "ground motion": [
+   0.24356538,
+   0.405162754
+  ],
+  "terrain": [
+   0.4376522,
+   0.727453413
+  ]
+ },
+ "shap_group_share_PC-GBM": {
+  "Newmark": {
+   "aisen2007": 0.0,
+   "cinchona2009": 0.007,
+   "denali2002": 0.26,
+   "iwate2008": 0.16,
+   "kaikoura2016": 0.195,
+   "niigata2004": 0.115,
+   "northridge1994": 0.042,
+   "palu2018": 0.112,
+   "porgera2018": 0.201
+  },
+  "ground motion": {
+   "aisen2007": 0.028,
+   "cinchona2009": 0.219,
+   "denali2002": 0.279,
+   "iwate2008": 0.185,
+   "kaikoura2016": 0.289,
+   "niigata2004": 0.281,
+   "northridge1994": 0.273,
+   "palu2018": 0.234,
+   "porgera2018": 0.242
+  },
+  "terrain": {
+   "aisen2007": 0.972,
+   "cinchona2009": 0.774,
+   "denali2002": 0.461,
+   "iwate2008": 0.655,
+   "kaikoura2016": 0.517,
+   "niigata2004": 0.604,
+   "northridge1994": 0.685,
+   "palu2018": 0.654,
+   "porgera2018": 0.557
+  }
+ },
+ "shap_group_share_PC-GBM_mean": {
+  "Newmark": 0.121,
+  "ground motion": 0.225,
+  "terrain": 0.653
+ },
+ "shap_group_share_PC-GBM_range": {
+  "Newmark": [
+   0.0,
+   0.259961
+  ],
+  "ground motion": [
+   0.028059006,
+   0.28851415
+  ],
+  "terrain": [
+   0.461180523,
+   0.971941025
+  ]
+ },
+ "shap_null_mean_pairwise_spearman_95pct": 0.08535353535353535
+}

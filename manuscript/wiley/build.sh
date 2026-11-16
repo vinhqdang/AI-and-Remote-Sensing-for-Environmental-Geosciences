@@ -5,3 +5,5 @@ xelatex -interaction=nonstopmode main.tex > /dev/null
 bibtex main
 xelatex -interaction=nonstopmode main.tex > /dev/null
 xelatex -interaction=nonstopmode main.tex > /dev/null
+xelatex -interaction=nonstopmode supporting_information.tex > /dev/null
+xelatex -interaction=nonstopmode supporting_information.tex > /dev/null

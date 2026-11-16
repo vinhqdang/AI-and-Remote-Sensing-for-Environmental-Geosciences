@@ -1,9 +1,6 @@
-\section{Supplementary material}
-\setcounter{table}{0}\renewcommand{\thetable}{S\arabic{table}}
-\setcounter{figure}{0}\renewcommand{\thefigure}{S\arabic{figure}}
 
-\subsection{Predictors}
-\begin{table}[h]\centering\small
+\section{Predictors}
+\begin{table}[ht]\centering\small
 \caption{Predictors used by the boosted models. ``Mono.'' marks predictors on which PC-GBM is constrained to a non-decreasing response.}\label{tab:features}
 \begin{tabular}{llll}\toprule
 Predictor & Definition & Source & Mono.\\\midrule
@@ -20,14 +17,23 @@ log\_newmark & $\log_{10}(D_N+0.1)$, $D_N$ in cm & GLO-30 + ShakeMap & yes\\
 \bottomrule\end{tabular}
 \end{table}
 
-\subsection{Covariate shift between events}
-\begin{figure*}[h]\centering
+\section{Covariate shift between events}
+\begin{figure}[h]\centering
 \includegraphics[width=\textwidth]{figS1_covariate_shift.pdf}
 \caption{Distribution of (a) $\log_{10}$PGV, (b) slope and (c) $\log_{10}(D_N+0.1)$ over all domain cells (grey, weighted to the full domain) and over landslide cells (event colour). Thick bars span the interquartile range, thin bars the 5--95\% range, ticks mark medians.}\label{fig:shift}
-\end{figure*}
+\end{figure}
 
-\subsection{Global logistic regression under low shaking}\label{sec:supp_lr}
+\section{Global logistic regression under low shaking}\label{sec:supp_lr}
 Coefficients of the global LR (predictors $\log_{10}$PGV, slope, $\log_{10}$PGV$\times$slope, relief/100~m) fitted on the eight non-target events were $(-3.14, -0.066, 0.119, -0.74)$ with intercept $-2.17$ when Ays\'en was held out, $(-3.16, -0.173, 0.181, -0.65)$ with intercept $-2.20$ when Cinchona was held out, and $(-0.45, 0.045, 0.042, -0.75)$ with intercept $-6.01$ when Kaik\={o}ura was held out. The derivative of the log-odds with respect to slope, $\beta_{s}+\beta_{sv}\log_{10}\mathrm{PGV}$, becomes negative for PGV below $10^{0.066/0.119}\approx3.6$~cm\,s$^{-1}$ and $10^{0.173/0.181}\approx9.0$~cm\,s$^{-1}$ in the first two fits. The median ShakeMap PGV is 3.95~cm\,s$^{-1}$ over the Ays\'en domain and 10.1~cm\,s$^{-1}$ over the Cinchona domain, compared with 26--55~cm\,s$^{-1}$ in the other events. At Ays\'en, 95.4\% of cells have PGV below the first percentile of the training data.
 
-\subsection{Full metrics of Experiment 1}
+\section{Gaussian tile random effect}\label{sec:supp_re}
+In this alternative to the quasi-posterior of Eq.~(5) of the main text, the log-odds of cell $i$ in mapped tile $t$ are $m_i+b+u_t$ with $u_t\sim\mathcal{N}(0,\sigma_u^2)$. The tile likelihood is integrated over $u_t$ by an exact discrete Gaussian convolution of the tile log-likelihood on a grid of spacing 0.025 log-odds units; this was verified against brute-force numerical integration to eight significant digits. $\sigma_u$ and the conditional event offsets of the other events were estimated jointly by profile likelihood from their out-of-sample scores ($\hat\sigma_u=2.0$--$2.25$), and $\mu$ and $\tau$ of the prior were taken from these conditional offsets. The probability that an unmapped tile contains a landslide, needed for the selection term, was likewise averaged over $u_t$. Table~4 of the main text reports the results.
+
+\section{Reliability diagrams}
+\begin{figure}[h]\centering
+\includegraphics[width=\textwidth]{fig4_reliability.pdf}
+\caption{Reliability diagrams of transferred global LR and PC-GBM models for each held-out event (log--log axes; predictions grouped into 12 quantile bins). Points above the diagonal indicate underprediction, below the diagonal overprediction.}\label{fig:reliability}
+\end{figure}
+
+\section{Full metrics of Experiment 1}
 {\small\input{../tables/tab_full}}
