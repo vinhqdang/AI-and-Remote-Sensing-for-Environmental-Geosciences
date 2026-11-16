@@ -51,3 +51,11 @@ The review (`review_round1.md`) recommended major revision. Each action item is 
 13. **NZ relevance.**
     - The low-shaking regime where HiPhyBoost does worse, and the Denali failure, are discussed explicitly.
     - An Alpine Fault scenario demonstration and frozen-model tests on Noto/Hualien 2024 are listed as future work. Their inventories and scenario ShakeMaps were not openly available in usable form.
+
+## Addendum: global extension (38 earthquakes)
+
+This extension addresses items 1, 6 and 13 further.
+- **Event set.** All repository events with at least 100 landslides and a ShakeMap were added: 38 earthquakes in total, 29 of them new (`src/20`–`27`). Leave-one-event-out fits were run on Google Colab GPUs.
+- **Transfer skill.** HiPhyBoost transfers better than PC-GBM in 29 of 38 events (Wilcoxon p = 0.0006). Subsets: Pacific Rim 20/25 (p = 0.0015); events not used to develop the method 21/29 (p = 0.014).
+- **Event covariates** (inventory type, mapping extent, ShakeMap stations, TerraClimate antecedent wetness, Mw, depth, mechanism) explain part of the offsets. A covariate-conditioned prior narrows zero-shot intervals from a median factor of 364 to 128 while coverage rises from 0.87 to 0.95. The gain in predictive density is not significant (p = 0.08), and this is stated in the text.
+- **Manuscript changes.** New Results section 4.x and Figure 11, Methods "Experiment 4", Supplementary Table S4, and updated Abstract, Introduction, Discussion and Conclusions.

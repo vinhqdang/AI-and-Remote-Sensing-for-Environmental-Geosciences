@@ -1,0 +1,8 @@
+{
+ "n_events": 38,
+ "auc_hiphy_median": 0.7952583045935602,
+ "auc_pcgbm_median": 0.7627868895251705,
+ "n_better": 29,
+ "mean_diff": 0.012837372114926845,
+ "p_wilcoxon": 0.0005679023524862714
+}

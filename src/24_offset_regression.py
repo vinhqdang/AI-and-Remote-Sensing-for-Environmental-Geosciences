@@ -71,7 +71,7 @@ def ridge_predict(Ztr, btr, zte, lams=(0.1, 0.3, 1, 3, 10, 30, 100)):
 def main(loeo_dir):
     z, cov = covariates()
     rows, auc_rows = [], []
-    targets = sorted(f.split("/")[-1][:-16] for f in glob.glob(os.path.join(loeo_dir, "*_scores.parquet")))
+    targets = sorted(os.path.basename(f)[:-len("_scores.parquet")] for f in glob.glob(os.path.join(loeo_dir, "*_scores.parquet")))
     for T in targets:
         s = pd.read_parquet(os.path.join(loeo_dir, f"{T}_scores.parquet"))
         o = pd.read_csv(os.path.join(loeo_dir, f"{T}_offsets.csv"))
