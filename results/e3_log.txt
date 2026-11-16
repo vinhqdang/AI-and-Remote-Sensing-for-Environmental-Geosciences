@@ -1,3 +1,11 @@
     model  mean_pairwise_spearman        sd  kendall_W
 0     GBM                0.420202  0.255051   0.484624
 1  PC-GBM                0.307427  0.308960   0.384343
+           count      mean       std  ...      50%      75%      max
+model                                 ...                           
+GBM          9.0  0.256900  0.138808  ...  0.29665  0.35725  0.42475
+Global LR    9.0  0.425778  0.214312  ...  0.38545  0.55730  0.81665
+PC-GBM       9.0  0.000000  0.000000  ...  0.00000  0.00000  0.00000
+
+[3 rows x 8 columns]
+kaikoura map done

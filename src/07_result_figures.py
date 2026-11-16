@@ -146,6 +146,76 @@ def fig_offsets():
     save(fig, "fig8_offsets")
 
 
+def fig_posterior(target="kaikoura2016", seed=3):
+    """Prior and posteriors of the event offset for the target event as mapped tiles accumulate."""
+    import hiphyboost as H
+    from scipy.special import expit
+    from scipy.optimize import brentq
+    df = X.load(); ts = df[df.event == target].reset_index(drop=True)
+    sc = pd.read_parquet(os.path.join(R, "hiphy_loeo_scores.parquet")); m = sc[sc.event == target].m.values
+    off = pd.read_csv(os.path.join(R, "hiphy_loeo_offsets.csv")); off = off[off.target == target].iloc[0]
+    mu, tau = off.mu, off.tau
+    y, w = ts.y.values.astype(float), ts.w.values.astype(float)
+    b_oracle = brentq(lambda b: np.sum(w * (expit(m + b) - y)), -25, 25)
+    grid = np.linspace(-20, 20, 1601)
+    _, inv = np.unique(X.blocks(ts, 3000), return_inverse=True); inv = inv.reshape(-1)
+    pos = np.unique(inv[y == 1]); tq = H.tile_q_matrix(m, w, inv, grid)
+    rng = np.random.default_rng(seed); order = rng.permutation(pos)
+    fig, axs = plt.subplots(1, 2, figsize=(7.1, 2.8))
+    prior = np.exp(-0.5 * ((grid - mu) / tau) ** 2); prior /= prior.sum()
+    for ax in axs:
+        ax.fill_between(grid, prior / (grid[1] - grid[0]), color="0.85", label="prior N(μ, τ²)")
+        ax.axvline(b_oracle, color="k", ls="--", lw=0.8, label="oracle offset (full inventory)")
+    cols = {1: "#f2b880", 5: "#e15759", 20: "#7b1e2b"}
+    for k, c in cols.items():
+        ch = order[:k]; cal = np.isin(inv, ch)
+        LLb, A = H.grid_loglik(m[cal], y[cal], w[cal], inv[cal], grid)
+        pn = H.posterior_from_ll(LLb, A, grid, mu, tau, False, True)
+        ps = H.posterior_from_ll(LLb, A, grid, mu, tau, True, True, sel_term=H.selection_logterm(tq[0], tq[1], ch))
+        axs[0].plot(grid, pn / (grid[1] - grid[0]), color=c, lw=1.2, label=f"k = {k}")
+        axs[1].plot(grid, ps / (grid[1] - grid[0]), color=c, lw=1.2, label=f"k = {k}")
+    for ax, t in zip(axs, ["(a) Naive Bayesian update", "(b) Selection-aware update (HiPhyBoost)"]):
+        ax.set_xlim(mu - 4 * tau, mu + 4 * tau); ax.set_xlabel("Event offset $b$ (log-odds)"); ax.set_ylabel("Density")
+        ax.set_title(t, loc="left", fontweight="bold", fontsize=8)
+    axs[1].legend(frameon=False, fontsize=6.5)
+    fig.tight_layout(); save(fig, "fig9_posterior_kaikoura")
+
+
+def fig_maps_multi(events=("northridge1994", "iwate2008", "porgera2018", "palu2018"), s=2000.0):
+    """Observed vs HiPhyBoost zero-shot landslide density (2 km cells) for four held-out events."""
+    from numpy.polynomial.hermite_e import hermegauss
+    from scipy.special import expit
+    from scipy.stats import spearmanr
+    df = X.load()
+    sc = pd.read_parquet(os.path.join(R, "hiphy_loeo_scores.parquet"))
+    offs = pd.read_csv(os.path.join(R, "hiphy_loeo_offsets.csv"))
+    xg, wg = hermegauss(40); wg = wg / np.sqrt(2 * np.pi)
+    fig, axs = plt.subplots(2, len(events), figsize=(7.1, 3.9))
+    rows = []
+    for j, e in enumerate(events):
+        ts = df[df.event == e].reset_index(drop=True); m = sc[sc.event == e].m.values
+        o = offs[offs.target == e].iloc[0]
+        p = expit(m[:, None] + o.mu + o.tau * xg[None, :]) @ wg
+        d = pd.DataFrame({"bx": np.floor(ts.x / s), "by": np.floor(ts.y_utm / s), "pw": p * ts.w, "yw": ts.y * ts.w, "n": ts.w})
+        g = d.groupby(["bx", "by"]).sum().reset_index()
+        g = g[g.n > 0.3 * (s / 30) ** 2]
+        g["obs"] = g.yw / g.n * 100; g["pred"] = g.pw / g.n * 100
+        rho = spearmanr(g.pred, g.obs).correlation; rows.append(dict(event=e, spearman_2km=rho))
+        x0, y0 = g.bx.min(), g.by.min(); nx, ny = int(g.bx.max() - x0 + 1), int(g.by.max() - y0 + 1)
+        vmax = max(np.nanpercentile(g.obs[g.obs > 0], 98), 0.05)
+        for i, col in enumerate(["obs", "pred"]):
+            A = np.full((ny, nx), np.nan); A[(g.by - y0).astype(int), (g.bx - x0).astype(int)] = g[col]
+            im = axs[i, j].imshow(np.clip(A, vmax / 300, None), origin="lower", cmap="magma_r", norm=LogNorm(vmax / 300, vmax))
+            axs[i, j].set_xticks([]); axs[i, j].set_yticks([])
+            for sp in axs[i, j].spines.values(): sp.set_visible(True); sp.set_linewidth(0.4)
+        axs[0, j].set_title(LAB[e], fontsize=7.5)
+        axs[1, j].set_xlabel(f"Spearman ρ = {rho:.2f}", fontsize=7)
+    axs[0, 0].set_ylabel("Observed"); axs[1, 0].set_ylabel("HiPhyBoost\nzero-shot")
+    cb = fig.colorbar(im, ax=axs, fraction=0.02, pad=0.01); cb.set_label("Landslide cells (% of 2 km cell)\n(colour scale per event)")
+    pd.DataFrame(rows).to_csv(os.path.join(R, "maps_multi_spearman.csv"), index=False)
+    save(fig, "fig10_maps_multi")
+
+
 def fig_shap():
     imp = pd.read_csv(os.path.join(R, "e3_shap_importance.csv"))
     cur = pd.read_csv(os.path.join(R, "e3_shap_pga_curves.csv"))
@@ -172,7 +242,7 @@ def fig_shap():
         bc = pd.cut(c.log_pga, bins); mm = c.groupby(bc, observed=True).agg(x=("log_pga", "median"), y=("shap_pga", "median"))
         ax2.plot(10 ** mm.x, mm.y, color=cmap(i), lw=1.2, label=LAB[e].split(" (")[0])
     ax2.set_xscale("log"); ax2.set_xlabel("ShakeMap PGA (g)"); ax2.set_ylabel("SHAP of log PGA (log-odds)")
-    ax2.legend(frameon=False, fontsize=5.5, ncol=1, loc="upper left")
+    ax2.legend(frameon=False, fontsize=5.5, ncol=1, loc="lower right")
     ax2.set_title("(b)", loc="left", fontweight="bold")
     save(fig, "fig6_shap")
 
@@ -221,10 +291,12 @@ def fig_kaikoura():
 
 
 if __name__ == "__main__":
-    which = sys.argv[1:] or ["loeo", "fewshot", "shap", "kaikoura", "offsets"]
+    which = sys.argv[1:] or ["loeo", "fewshot", "shap", "kaikoura", "offsets", "posterior", "maps"]
     if "loeo" in which: fig_loeo()
     if "fewshot" in which: fig_fewshot()
     if "shap" in which: fig_shap()
     if "kaikoura" in which: fig_kaikoura()
     if "offsets" in which: fig_offsets()
+    if "posterior" in which: fig_posterior()
+    if "maps" in which: fig_maps_multi()
     if "reliability" in which: fig_reliability(X.load())

@@ -1,0 +1,28 @@
+event,model,frac_violation
+kaikoura2016,GBM,0.35725
+kaikoura2016,PC-GBM,0.0
+kaikoura2016,Global LR,0.2713
+northridge1994,GBM,0.42475
+northridge1994,PC-GBM,0.0
+northridge1994,Global LR,0.47345
+niigata2004,GBM,0.1234
+niigata2004,PC-GBM,0.0
+niigata2004,Global LR,0.81665
+iwate2008,GBM,0.3823
+iwate2008,PC-GBM,0.0
+iwate2008,Global LR,0.2386
+aisen2007,GBM,0.04745
+aisen2007,PC-GBM,0.0
+aisen2007,Global LR,0.5573
+denali2002,GBM,0.26045
+denali2002,PC-GBM,0.0
+denali2002,Global LR,0.38545
+cinchona2009,GBM,0.0825
+cinchona2009,PC-GBM,0.0
+cinchona2009,Global LR,0.64875
+porgera2018,GBM,0.33735
+porgera2018,PC-GBM,0.0
+porgera2018,Global LR,0.20685
+palu2018,GBM,0.29665
+palu2018,PC-GBM,0.0
+palu2018,Global LR,0.23365
