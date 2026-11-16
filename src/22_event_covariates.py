@@ -55,9 +55,11 @@ def events_table():
     return pd.DataFrame(rows)
 
 
-def main():
+def main(only=None, out_name="event_covariates.csv"):
     import requests
     T = events_table()
+    if only:
+        T = T[T.event.isin(only)]
     tc = open_tc()
     out = []
     for _, r in T.iterrows():
@@ -74,14 +76,17 @@ def main():
             box = tc.sel(lat=(la0 + la1) / 2, lon=(lo0 + lo1) / 2, method="nearest").expand_dims(["lat", "lon"])
         m0 = pd.Timestamp(t.year, t.month, 1); mp = m0 - pd.DateOffset(months=1)
         frac = (t.day - 1 + t.hour / 24) / t.days_in_month
-        series = box[["ppt", "soil", "pdsi"]].mean(["lat", "lon"]).load()
-        def val(var, ts): return float(series[var].sel(time=ts).values)
+        if box.sizes["lat"] * box.sizes["lon"] > 400:          # thin large boxes for speed
+            st = int(np.ceil(np.sqrt(box.sizes["lat"] * box.sizes["lon"] / 400)))
+            box = box.isel(lat=slice(None, None, st), lon=slice(None, None, st))
+        def val(var, ts): return float(box[var].sel(time=ts).mean().values)
         ppt_ante = val("ppt", mp) + frac * val("ppt", m0)
-        clim = series.sel(time=slice("1981-01-01", "2010-12-01"))
-        cm = clim.groupby("time.month").mean()
-        ppt_clim = float(cm.ppt.sel(month=mp.month)) + frac * float(cm.ppt.sel(month=m0.month))
-        soil_anom = val("soil", mp) - float(cm.soil.sel(month=mp.month))
-        map_mm = float(clim.ppt.groupby("time.year").sum().mean())
+        yrs = range(1981, 2011)
+        clim_mp = box[["ppt", "soil"]].sel(time=[pd.Timestamp(y, mp.month, 1) for y in yrs]).mean(["lat", "lon"]).load()
+        clim_m0 = box["ppt"].sel(time=[pd.Timestamp(y, m0.month, 1) for y in yrs]).mean(["lat", "lon"]).load()
+        ppt_clim = float(clim_mp.ppt.mean()) + frac * float(clim_m0.mean())
+        soil_anom = val("soil", mp) - float(clim_mp.soil.mean())
+        map_mm = float(box["ppt"].sel(time=slice("1991-01-01", "2010-12-01")).mean(["lat", "lon"]).load().sum()) / 20
         # inventory: minimum mapped size proxy
         p5 = np.nan
         if r.geometry_type == "Polygon":
@@ -96,8 +101,11 @@ def main():
                         ppt_ratio=ppt_ante / max(ppt_clim, 1.0), soil_anom_mm=soil_anom, pdsi_prev=val("pdsi", mp), map_mm=map_mm,
                         lon=(lo0 + lo1) / 2, lat=(la0 + la1) / 2))
         print(out[-1], flush=True)
-    pd.DataFrame(out).to_csv(os.path.join(ROOT, "data", "global", "event_covariates.csv"), index=False)
+    pd.DataFrame(out).to_csv(os.path.join(ROOT, "data", "global", out_name), index=False)
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 2:
+        main(sys.argv[2:], out_name=f"cov_part_{sys.argv[1]}.csv")
+    else:
+        main()
