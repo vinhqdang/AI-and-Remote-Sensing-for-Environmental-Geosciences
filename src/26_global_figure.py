@@ -16,26 +16,28 @@ for pac, mk, lab in [(True, "o", "Pacific Rim (25)"), (False, "^", "other (13)")
     ax.scatter(g.auc_pcgbm, g.auc_hiphy, marker=mk, s=16, color="#e15759" if pac else "#4e79a7", label=lab, lw=0)
 ax.plot([0.5, 1], [0.5, 1], "k--", lw=0.6); ax.set_xlim(0.53, 0.97); ax.set_ylim(0.53, 0.97)
 ax.set_xlabel("AUC, PC-GBM"); ax.set_ylabel("AUC, HiPhyBoost"); ax.legend(frameon=False, fontsize=6.5, loc="upper left")
-ax.set_title("(a) 29/38 above diagonal", loc="left", fontsize=7.5, fontweight="bold")
+ax.set_title("(a) Transfer AUC, 38 events", loc="left", fontsize=7.5, fontweight="bold")
+ax.text(0.95, 0.05, "29 of 38 above diagonal", transform=ax.transAxes, ha="right", fontsize=6.5)
 ax = axs[1]
-c = cov.loc[off.index]
+import json, glob
+area = {}
+for f in glob.glob(os.path.join(ROOT, "data", "processed*", "*_info.json")):
+    d = json.load(open(f)); area[d["event"]] = d["area_km2"]
+c = cov.loc[off.index]; A = pd.Series(area).loc[off.index]
 for pt, mk, col, lab in [(False, "o", "#59a14f", "polygon inventory"), (True, "s", "#f28e2b", "point catalogue")]:
-    m = c.point_inventory == pt
-    ax.scatter(c.ppt_ratio[m], off[m], marker=mk, s=16, color=col, label=lab, lw=0)
-ax.set_xscale("log"); ax.set_xlabel("Antecedent precipitation / climatology"); ax.set_ylabel("Event offset $b_e$ (log-odds)")
-from matplotlib.ticker import FixedLocator, NullLocator, FixedFormatter
-ax.xaxis.set_major_locator(FixedLocator([0.25, 0.5, 1, 2])); ax.xaxis.set_major_formatter(FixedFormatter(["0.25", "0.5", "1", "2"]))
-ax.xaxis.set_minor_locator(NullLocator())
-ax.axhline(0, color="0.6", lw=0.5); ax.legend(frameon=False, fontsize=6.5, loc="upper left")
-ax.set_title("(b) Offsets and event covariates", loc="left", fontsize=7.5, fontweight="bold")
+    m = (c.point_inventory == pt).values
+    ax.scatter(A[m], off[m], marker=mk, s=16, color=col, label=lab, lw=0)
+ax.set_xscale("log"); ax.set_xlabel("Study-domain area (km$^2$)"); ax.set_ylabel("Event offset $b_e$ (log-odds)")
+ax.axhline(0, color="0.6", lw=0.5); ax.legend(frameon=False, fontsize=6.5, loc="lower left")
+ax.set_title("(b) Offsets vs domain size", loc="left", fontsize=7.5, fontweight="bold")
 ax = axs[2]
-names = ["M0 unconditional", "M1 inventory/mapping", "M2 shaking/ShakeMap", "M3 climate/wetness", "M4 all"]
-short = ["none", "inventory", "ShakeMap", "climate", "all"]
+names = ["M0 unconditional", "F1 shaking (forecast-time)", "F2 climate (forecast-time)", "F3 all forecast-time", "P2 inventory + domain (post-event)"]
+short = ["none", "F1 shaking", "F2 climate", "F3 F1+F2", "P2 post-event"]
 x = np.arange(len(names))
-ax.bar(x, s.loc[names, "width_median"], color="#bab0ac")
-ax.set_xticks(x); ax.set_xticklabels(short, rotation=30); ax.set_ylabel("Median width of 90% interval (×)")
+ax.bar(x, s.loc[names, "width_median"], color=["#bab0ac", "#4e79a7", "#4e79a7", "#4e79a7", "#f28e2b"])
+ax.set_xticks(x); ax.set_xticklabels(short, rotation=35, ha="right"); ax.set_ylabel("Median width of 90% interval (×)")
 ax2 = ax.twinx(); ax2.plot(x, s.loc[names, "coverage"], "o-", color="#e15759"); ax2.set_ylim(0.5, 1.0); ax2.axhline(0.9, color="#e15759", ls=":", lw=0.6)
-ax2.set_ylabel("Coverage", color="#e15759"); ax2.spines["right"].set_visible(True)
+ax2.set_ylabel("Coverage (of 38 events)", color="#e15759"); ax2.spines["right"].set_visible(True)
 ax.set_title("(c) Zero-shot prior covariates", loc="left", fontsize=7.5, fontweight="bold")
 fig.tight_layout()
 for ext in ["pdf", "png"]:

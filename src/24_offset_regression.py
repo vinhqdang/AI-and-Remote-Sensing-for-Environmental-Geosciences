@@ -20,12 +20,16 @@ from sklearn.metrics import roc_auc_score
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 R = os.path.join(ROOT, "results", "global"); os.makedirs(R, exist_ok=True)
 
+# Covariate sets. "Forecast-time" covariates are known within hours of an earthquake; "post-event"
+# covariates describe the inventory and the mapped domain, which exist only after mapping.
 SETS = {
-    "M1 inventory/mapping": ["point_inventory", "mapping_extent", "log_p5_area", "p5_missing", "year"],
-    "M2 shaking/ShakeMap": ["log_stations", "mag", "log_depth"],
-    "M3 climate/wetness": ["pdsi_prev", "log_ppt_ratio", "log_map"],
-    "M4 all": ["point_inventory", "mapping_extent", "log_p5_area", "p5_missing", "year", "log_stations", "mag",
-               "log_depth", "pdsi_prev", "log_ppt_ratio", "log_map"],
+    "F1 shaking (forecast-time)": ["log_stations", "mag", "log_depth", "rev", "normal"],
+    "F2 climate (forecast-time)": ["pdsi_prev", "log_ppt_ratio", "log_map"],
+    "F3 all forecast-time": ["log_stations", "mag", "log_depth", "rev", "normal", "pdsi_prev", "log_ppt_ratio", "log_map"],
+    "P1 inventory (post-event)": ["point_inventory", "mapping_extent", "year"],
+    "P2 inventory + domain (post-event)": ["point_inventory", "mapping_extent", "year", "log_area"],
+    "P3 all": ["log_stations", "mag", "log_depth", "rev", "normal", "pdsi_prev", "log_ppt_ratio", "log_map",
+               "point_inventory", "mapping_extent", "year", "log_area"],
 }
 
 
@@ -33,7 +37,11 @@ def covariates():
     c = pd.read_csv(os.path.join(ROOT, "data", "global", "event_covariates.csv")).set_index("event")
     z = pd.DataFrame(index=c.index)
     z["point_inventory"] = c.point_inventory.astype(float); z["mapping_extent"] = c.mapping_extent.astype(float)
-    lp = np.log10(c.poly_area_p5_m2); z["p5_missing"] = lp.isna().astype(float); z["log_p5_area"] = lp.fillna(lp.median())
+    import json, glob
+    area = {}
+    for f in glob.glob(os.path.join(ROOT, "data", "processed", "*_info.json")) + glob.glob(os.path.join(ROOT, "data", "processed_global", "*_info.json")):
+        d = json.load(open(f)); area[d["event"]] = d["area_km2"]
+    z["log_area"] = np.log10(pd.Series(area).reindex(c.index).values)
     z["year"] = c.year.astype(float); z["log_stations"] = np.log1p(c.shakemap_stations.clip(lower=0).fillna(0))
     z["mag"] = c.mag; z["log_depth"] = np.log10(c.depth_km.clip(lower=1))
     z["pdsi_prev"] = c.pdsi_prev.fillna(0); z["log_ppt_ratio"] = np.log(c.ppt_ratio.clip(lower=0.05)).fillna(0)
@@ -42,7 +50,7 @@ def covariates():
     return z, c
 
 
-def ridge_predict(Ztr, btr, zte, lams=(0.1, 0.3, 1, 3, 10, 30, 100)):
+def ridge_predict(Ztr, btr, zte, lams=(0.1, 0.3, 1, 3, 10, 30, 100, 300, 1000, 3000, 10000)):
     mu, sd = Ztr.mean(0), Ztr.std(0) + 1e-9
     A = (Ztr - mu) / sd; a = (zte - mu) / sd
     n, p = A.shape
@@ -118,5 +126,63 @@ def main(loeo_dir):
     print({k: round(v, 2) for k, v in sorted(corr.items(), key=lambda kv: -abs(kv[1]))})
 
 
-if __name__ == "__main__":
+if __name__ == "__main__" and len(sys.argv) == 2:
     main(sys.argv[1])
+
+
+def extras(loeo_dir, n_perm=200):
+    """Correlations with p-values, subset/sign tests, bootstrap CI of the AUC gain, and a placebo
+    (permuted-covariate) reference for the predictive-density gain of each covariate set."""
+    from scipy.stats import pearsonr, binomtest
+    z, cov = covariates()
+    allo = pd.read_csv(os.path.join(loeo_dir, "ALL_offsets.csv")).set_index("train_event").b
+    zz = z.loc[allo.index]
+    corr = {c: dict(r=float(pearsonr(zz[c], allo)[0]), p=float(pearsonr(zz[c], allo)[1])) for c in zz.columns if zz[c].std() > 0}
+    json.dump(corr, open(os.path.join(R, "offset_covariate_correlations.json"), "w"), indent=1)
+    a = pd.read_csv(os.path.join(R, "global_auc.csv"))
+    sys.path.insert(0, os.path.dirname(__file__)); from events import EVENTS
+    a["new"] = ~a.event.isin(list(EVENTS)); d = a.auc_hiphy - a.auc_pcgbm
+    sel = pd.read_csv(os.path.join(ROOT, "data", "global", "selected_events.csv")).set_index("key")
+    a["pacific"] = [True if e in EVENTS else bool(sel.loc[e, "pacific_rim"]) for e in a.event]
+    a.to_csv(os.path.join(R, "global_auc.csv"), index=False)
+    rng = np.random.default_rng(0)
+    boot = [d.sample(len(d), replace=True, random_state=int(rng.integers(1e9))).mean() for _ in range(5000)]
+    sub = {}
+    for nm, m in [("all", np.ones(len(a), bool)), ("pacific", a.pacific.values), ("other", ~a.pacific.values), ("new", a.new.values),
+                  ("new_pacific", (a.new & a.pacific).values), ("original9", (~a.new).values)]:
+        dd = d[m]
+        sub[nm] = dict(n=int(m.sum()), n_better=int((dd > 0).sum()), median_diff=float(dd.median()), p_wilcoxon=float(wilcoxon(dd).pvalue),
+                       p_sign=float(binomtest(int((dd > 0).sum()), int((dd != 0).sum())).pvalue))
+    sub["all"]["mean_diff_boot95"] = [float(np.percentile(boot, 2.5)), float(np.percentile(boot, 97.5))]
+    json.dump(sub, open(os.path.join(R, "global_auc_subsets.json"), "w"), indent=1)
+    # placebo for predictive-density gains
+    targets = sorted(os.path.basename(f)[:-len("_scores.parquet")] for f in glob.glob(os.path.join(loeo_dir, "*_scores.parquet")))
+    r = pd.read_csv(os.path.join(R, "offset_regression.csv"))
+    bstar = r.drop_duplicates("event").set_index("event").b_star
+    folds = {}
+    for T in targets:
+        o = pd.read_csv(os.path.join(loeo_dir, f"{T}_offsets.csv")); o = o[o.train_event.isin(z.index)]
+        folds[T] = (o.train_event.values, o.b.values)
+    def lpd_gain(zp, cols):
+        g = []
+        for T in targets:
+            ev, btr = folds[T]
+            mu0, sd0, dof0 = btr.mean(), btr.std(ddof=1) * np.sqrt(1 + 1 / len(btr)), len(btr) - 1
+            l0 = tdist.logpdf((bstar[T] - mu0) / sd0, dof0) - np.log(sd0)
+            mu, sd, dof, _ = ridge_predict(zp.loc[ev, cols].values.astype(float), btr, zp.loc[T, cols].values.astype(float))
+            g.append(tdist.logpdf((bstar[T] - mu) / sd, dof) - np.log(sd) - l0)
+        return float(np.mean(g))
+    plac = {}
+    for name, cols in SETS.items():
+        obs = lpd_gain(z, cols); null = []
+        for k in range(n_perm):
+            zp = z.copy(); zp[:] = z.values[rng.permutation(len(z))]
+            null.append(lpd_gain(zp, cols))
+        plac[name] = dict(observed=obs, null_mean=float(np.mean(null)), null_95=float(np.percentile(null, 95)),
+                          p_perm=float((1 + np.sum(np.array(null) >= obs)) / (1 + n_perm)))
+        print(name, plac[name], flush=True)
+    json.dump(plac, open(os.path.join(R, "offset_regression_placebo.json"), "w"), indent=1)
+
+
+if __name__ == "__main__" and len(sys.argv) > 2 and sys.argv[2] == "extras":
+    extras(sys.argv[1])
