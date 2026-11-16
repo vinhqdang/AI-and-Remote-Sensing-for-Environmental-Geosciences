@@ -1,0 +1,15 @@
+{
+ "event": "kashmir2005",
+ "comcat_id": "usp000e12e",
+ "label": "Kashmir 2005",
+ "crs": "EPSG:32643",
+ "area_km2": 4406.9607,
+ "n_valid_cells": 4896623,
+ "n_pos_cells": 2929,
+ "n_landslides_inventory": 2930,
+ "prevalence": 0.0005981673492118957,
+ "neg_rate": 0.03063320607971604,
+ "shakemap_n_stations": 0,
+ "pga_max": 1.356307029724121,
+ "geometry_type": "Polygon"
+}

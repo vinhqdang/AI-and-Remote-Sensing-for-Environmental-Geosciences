@@ -1,0 +1,15 @@
+{
+ "event": "lefkada2003",
+ "comcat_id": "usp000c4tt",
+ "label": "Lefkada 2003",
+ "crs": "EPSG:32634",
+ "area_km2": 223.4745,
+ "n_valid_cells": 248305,
+ "n_pos_cells": 252,
+ "n_landslides_inventory": 274,
+ "prevalence": 0.0010148808924508165,
+ "neg_rate": 0.438441264669499,
+ "shakemap_n_stations": 9,
+ "pga_max": 0.7592908143997192,
+ "geometry_type": "Polygon"
+}

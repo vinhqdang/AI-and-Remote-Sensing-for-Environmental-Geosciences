@@ -1,0 +1,15 @@
+{
+ "event": "wenchuan2008",
+ "comcat_id": "usp000g650",
+ "label": "Wenchuan 2008",
+ "crs": "EPSG:32648",
+ "area_km2": 77831.6238,
+ "n_valid_cells": 86479582,
+ "n_pos_cells": 197160,
+ "n_landslides_inventory": 197481,
+ "prevalence": 0.002279844507111517,
+ "neg_rate": 0.0017345132018236984,
+ "shakemap_n_stations": 421,
+ "pga_max": 1.1291511058807373,
+ "geometry_type": "Polygon"
+}

@@ -1,0 +1,15 @@
+{
+ "event": "norcia2016",
+ "comcat_id": "us1000731j",
+ "label": "Norcia 2016 (2016-10-30)",
+ "crs": "EPSG:32633",
+ "area_km2": 4202.9307,
+ "n_valid_cells": 4669923,
+ "n_pos_cells": 349,
+ "n_landslides_inventory": 378,
+ "prevalence": 7.47335662707929e-05,
+ "neg_rate": 0.03212051945791478,
+ "shakemap_n_stations": -1,
+ "pga_max": 0.49127063155174255,
+ "geometry_type": "Point"
+}

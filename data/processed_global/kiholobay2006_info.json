@@ -1,0 +1,15 @@
+{
+ "event": "kiholobay2006",
+ "comcat_id": "hv5532127",
+ "label": "Kiholo Bay 2006",
+ "crs": "EPSG:32605",
+ "area_km2": 229.1958,
+ "n_valid_cells": 254662,
+ "n_pos_cells": 379,
+ "n_landslides_inventory": 383,
+ "prevalence": 0.0014882471668329,
+ "neg_rate": 0.5162683336223204,
+ "shakemap_n_stations": 23,
+ "pga_max": 0.6224424839019775,
+ "geometry_type": "Polygon"
+}

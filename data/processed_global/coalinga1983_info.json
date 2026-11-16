@@ -1,0 +1,15 @@
+{
+ "event": "coalinga1983",
+ "comcat_id": "nc1091100",
+ "label": "Coalinga 1983",
+ "crs": "EPSG:32610",
+ "area_km2": 1855.5849,
+ "n_valid_cells": 2061761,
+ "n_pos_cells": 3881,
+ "n_landslides_inventory": 3980,
+ "prevalence": 0.0018823714290841665,
+ "neg_rate": 0.07275372002735568,
+ "shakemap_n_stations": -1,
+ "pga_max": 0.9228456616401672,
+ "geometry_type": "Polygon"
+}

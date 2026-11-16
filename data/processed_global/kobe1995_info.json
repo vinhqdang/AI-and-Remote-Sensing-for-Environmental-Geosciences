@@ -1,0 +1,15 @@
+{
+ "event": "kobe1995",
+ "comcat_id": "usp0006rew",
+ "label": "Kobe 1995",
+ "crs": "EPSG:32653",
+ "area_km2": 174.7314,
+ "n_valid_cells": 194146,
+ "n_pos_cells": 2158,
+ "n_landslides_inventory": 2353,
+ "prevalence": 0.011115346182769667,
+ "neg_rate": 0.7725682973730214,
+ "shakemap_n_stations": 20,
+ "pga_max": 1.0356523990631104,
+ "geometry_type": "Polygon"
+}

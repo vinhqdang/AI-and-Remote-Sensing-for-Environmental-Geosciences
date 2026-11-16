@@ -1,0 +1,15 @@
+{
+ "event": "sanfernando1971",
+ "comcat_id": "ci3347678",
+ "label": "San Fernando 1971",
+ "crs": "EPSG:32611",
+ "area_km2": 481.5315,
+ "n_valid_cells": 535035,
+ "n_pos_cells": 387,
+ "n_landslides_inventory": 391,
+ "prevalence": 0.0007233171661666993,
+ "neg_rate": 0.2803571458546111,
+ "shakemap_n_stations": 113,
+ "pga_max": 1.0166345834732056,
+ "geometry_type": "Point"
+}
