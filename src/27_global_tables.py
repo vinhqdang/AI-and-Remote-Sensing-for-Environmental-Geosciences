@@ -26,13 +26,13 @@ import json
 R = os.path.join(ROOT, "results", "global")
 s = pd.read_csv(os.path.join(R, "offset_regression_summary.csv")).set_index("model"); pl = json.load(open(os.path.join(R, "offset_regression_placebo.json")))
 covd = pd.read_csv(os.path.join(R, "offset_regression.csv")).groupby("model").covered.sum()
-order = ["M0 unconditional", "F1 shaking (forecast-time)", "F2 climate (forecast-time)", "F3 all forecast-time", "P1 inventory (post-event)", "P2 inventory + domain (post-event)", "P3 all"]
-lab = {"M0 unconditional": "None (unconditional prior)", "F1 shaking (forecast-time)": "F1: Mw, depth, mechanism, ShakeMap stations", "F2 climate (forecast-time)": "F2: PDSI, rain ratio, mean annual rain",
+order = ["M0 unconditional", "F1 shaking (forecast-time)", "F2 climate (forecast-time)", "F3 all forecast-time", "S2 climate over landslide area (sensitivity)", "P1 inventory (post-event)", "P2 inventory + domain (post-event)", "P3 all"]
+lab = {"M0 unconditional": "None (unconditional prior)", "F1 shaking (forecast-time)": "F1: Mw, depth, mechanism, ShakeMap stations", "F2 climate (forecast-time)": "F2: PDSI, rain ratio, mean annual rain (shaken area)", "S2 climate over landslide area (sensitivity)": "F2 computed over the landslide area (sensitivity)",
        "F3 all forecast-time": "F3: F1 + F2", "P1 inventory (post-event)": "P1: inventory type, mapping extent, year", "P2 inventory + domain (post-event)": "P2: P1 + domain area", "P3 all": "P3: F3 + P2"}
 L = []
 for m in order:
     r = s.loc[m]; p = pl.get(m, {}); m0 = m.startswith("M0")
-    L.append(f"{lab[m]} & {'' if m0 else ('forecast' if m.startswith('F') else 'post-event')} & {r.lpd_mean:.2f} & {'--' if m0 else f'{r.lpd_gain_vs_M0:+.2f}'} & {'--' if m0 else f'{r.p_lpd_gain:.3f}'} & {'--' if m0 else f'{p[chr(112)+chr(95)+chr(112)+chr(101)+chr(114)+chr(109)]:.3f}'} & {int(covd[m])}/38 & {r.width_median:.0f} & {2 ** r.abs_log2_eo_median:.1f}\\\\")
+    L.append(f"{lab[m]} & {'' if m0 else ('forecast' if m.startswith('F') else ('sensitivity' if m.startswith('S') else 'post-event'))} & {r.lpd_mean:.2f} & {'--' if m0 else f'{r.lpd_gain_vs_M0:+.2f}'} & {'--' if m0 else f'{r.p_lpd_gain:.3f}'} & {'--' if m0 else f'{p[chr(112)+chr(95)+chr(112)+chr(101)+chr(114)+chr(109)]:.3f}'} & {int(covd[m])}/38 & {r.width_median:.0f} & {2 ** r.abs_log2_eo_median:.1f}\\\\")
 t = ("\\begin{table}[ht]\\centering\\small\n\\caption{Zero-shot priors for the event offset in the 38-event leave-one-event-out analysis. LPD: mean log predictive density of the held-out offset (nats); gain relative to the unconditional prior with paired Wilcoxon $p$ and permutation $p$ (200 random permutations of the covariate vectors among events); coverage of the 90\\% interval for the landslide total; median interval width (ratio of bounds) and median error factor of the median forecast.}\\label{tab:offreg}\n"
      "\\resizebox{\\textwidth}{!}{\\begin{tabular}{llrrrrrrr}\\toprule\nCovariates & Available & LPD & Gain & $p$ & $p_{\\mathrm{perm}}$ & Coverage & Width & Error\\\\\\midrule\n" + "\n".join(L) + "\n\\bottomrule\\end{tabular}}\\end{table}\n")
 open(os.path.join(T, "tab_offreg.tex"), "w").write(t)

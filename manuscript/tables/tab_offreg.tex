@@ -4,9 +4,10 @@
 Covariates & Available & LPD & Gain & $p$ & $p_{\mathrm{perm}}$ & Coverage & Width & Error\\\midrule
 None (unconditional prior) &  & -2.03 & -- & -- & -- & 33/38 & 364 & 2.9\\
 F1: Mw, depth, mechanism, ShakeMap stations & forecast & -1.86 & +0.18 & 0.038 & 0.005 & 33/38 & 132 & 3.2\\
-F2: PDSI, rain ratio, mean annual rain & forecast & -2.08 & -0.04 & 0.293 & 0.945 & 33/38 & 342 & 3.1\\
-F3: F1 + F2 & forecast & -1.87 & +0.16 & 0.048 & 0.005 & 34/38 & 137 & 3.3\\
-P1: inventory type, mapping extent, year & post-event & -1.99 & +0.04 & 0.153 & 0.030 & 33/38 & 245 & 3.6\\
-P2: P1 + domain area & post-event & -1.83 & +0.20 & 0.010 & 0.005 & 36/38 & 120 & 3.4\\
-P3: F3 + P2 & post-event & -1.85 & +0.18 & 0.067 & 0.005 & 35/38 & 121 & 3.3\\
+F2: PDSI, rain ratio, mean annual rain (shaken area) & forecast & -2.08 & -0.05 & 0.350 & 0.945 & 33/38 & 301 & 3.0\\
+F3: F1 + F2 & forecast & -1.82 & +0.21 & 0.034 & 0.005 & 34/38 & 107 & 3.1\\
+F2 computed over the landslide area (sensitivity) & sensitivity & -2.08 & -0.04 & 0.293 & 0.910 & 33/38 & 342 & 3.1\\
+P1: inventory type, mapping extent, year & post-event & -1.99 & +0.04 & 0.153 & 0.025 & 33/38 & 245 & 3.6\\
+P2: P1 + domain area & post-event & -1.83 & +0.20 & 0.010 & 0.010 & 36/38 & 120 & 3.4\\
+P3: F3 + P2 & post-event & -1.78 & +0.25 & 0.011 & 0.005 & 33/38 & 98 & 2.8\\
 \bottomrule\end{tabular}}\end{table}

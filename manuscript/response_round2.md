@@ -46,4 +46,9 @@ The review (`review_round2.md`) recommended a light major revision. Its numerica
     - The remaining 261 pt overfull warnings come from the Wiley class itself.
     - Title-page metadata (volume, DOI, dates) is filled in by the journal at publication.
 
-Not done: confidence intervals for the coverage bars in Figure 11c, and recomputing TerraClimate averages over the shaken area instead of the landslide area. Both are noted as limitations.
+Follow-up (both items previously listed as not done):
+- **Climate over the shaken area.** The TerraClimate covariates are now averaged over the strongly shaken area: up to 300 ShakeMap nodes with PGA ≥ 0.2 g (`src/28_climate_shaken_area.py`). They are therefore forecast-time and no longer outcome-defined. The landslide-area versions are kept as a sensitivity set.
+  - The values correlate 0.95–0.98 with the landslide-area versions.
+  - The correlation between antecedent precipitation and the offset rises to r = 0.37 (p = 0.02).
+  - The full forecast-time prior (F3) narrows intervals to ×107 (from ×364) with 34/38 coverage. Its LPD gain is +0.21 (paired p = 0.03; permutation p = 0.005).
+- **Confidence intervals in Figure 11c.** Bootstrap 95% intervals over events for the median width, and Wilson 95% intervals for coverage. Coverage differences between priors are not significant (the text says so); the reduction in width is.
