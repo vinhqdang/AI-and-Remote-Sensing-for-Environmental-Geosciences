@@ -34,11 +34,12 @@ INV_FIELDS = "title,facets,summary,body,citation,spatial,webLinks,dates"
 EVENT_FIELDS = "title,webLinks,body"
 SB_LIST = "https://www.sciencebase.gov/catalog/items?parentId={pid}&format=json&max=300&fields={fields}"
 COMCAT = "https://earthquake.usgs.gov/fdsnws/event/1/query?{q}"
-LARGE_FILE = 50 * 1024 ** 2
 
 # Inventory items whose text does not name an event date/place clearly enough for
 # the automatic matcher. Maps sb_id -> event folder id (filled after review).
-OVERRIDES = {}
+OVERRIDES = {
+    "5ef24c6b82ced62aaae3bc5f": "5ef24b9d82ced62aaae3bc59",  # Knoper 2020, Puerto Rico sequence (no date in text)
+}
 
 SESSION = requests.Session()
 SESSION.headers["User-Agent"] = "landslide-inventory-catalogue/1.0"
@@ -173,9 +174,7 @@ def layer_info(files):
         n = struct.unpack("<I", get_head(by_ext["dbf"]["url"], 8)[4:8])[0]
     elif "shx" in by_ext and by_ext["shx"].get("size"):  # 100-byte header + 8 bytes per record
         n = (int(by_ext["shx"]["size"]) - 100) // 8
-    elif int(shp.get("size") or 0) > LARGE_FILE:
-        n = -1
-    else:
+    else:  # no dBase/index file to read the count from; do not fetch large shapefiles
         n = -1
     return {"has_shp": True, "geometry_type": geom, "n_features": n}
 
@@ -206,7 +205,7 @@ def total_size(facets):
 def comcat_ids(folder):
     ids = []
     for link in folder.get("webLinks", []) or []:
-        m = re.search(r"eventpage/([A-Za-z0-9]+)", link.get("uri", ""))
+        m = re.search(r"eventpage/([A-Za-z0-9_]+)", link.get("uri", ""))
         if m and m.group(1) not in ids:
             ids.append(m.group(1))
     return ids
@@ -214,7 +213,7 @@ def comcat_ids(folder):
 
 def match_inventory(inv, folders):
     """Score each event folder against an inventory's title/body; return best folder or None."""
-    text = f"{inv['title']} {strip_html(inv.get('body') or inv.get('summary'))}"
+    text = f"{inv['title']} {strip_html(inv.get('body') or inv.get('summary'))} {strip_html(inv.get('citation'))}"
     dates = parse_dates(text)
     words = {w.lower() for w in re.findall(r"[A-Za-z]{4,}", text)}
     best, best_score = None, 0
@@ -225,7 +224,8 @@ def match_inventory(inv, folders):
         elif any(abs((f["date"] - d).days) <= 1 for d in dates if f["date"]):
             score += 5
         place_words = {w.lower() for w in re.findall(r"[A-Za-z]{4,}", f["place"])} - GENERIC_WORDS
-        score += 3 * len(place_words & words) > 0 and 3 or 0
+        if place_words & words:
+            score += 3
         score += 2 if mentions_mag(text, f["mag"]) else 0
         if score > best_score:
             best, best_score = f, score
@@ -303,7 +303,8 @@ def rake_of(products):
         if prods:
             rake = prods[0].get("properties", {}).get("nodal-plane-1-rake")
             if rake not in (None, ""):
-                return float(rake)
+                rake = float(rake)
+                return rake - 360 if rake > 180 else rake  # some products use 0..360
     return None
 
 
@@ -336,6 +337,14 @@ def pacific_rim(lon, lat):
         (166, 179, -48, -34),    # New Zealand
     ]
     return any(a <= lon <= b and c <= lat <= d for a, b, c, d in boxes)
+
+
+def failure_type(inv):
+    """'liquefaction' for liquefaction-only inventories (no landslides), else 'landslide'."""
+    head = f"{inv['title']} {strip_html(inv.get('body') or inv.get('summary'))[:400]}"
+    if re.search(r"liquefact", head, re.I) and not re.search(r"landslide|mass.?wasting|slope", head, re.I):
+        return "liquefaction"
+    return "landslide"
 
 
 def clean_text(text, n=None):
@@ -407,6 +416,7 @@ def main():
             "rake": rake,
             "mechanism": mechanism(rake),
             "pacific_rim": pacific_rim(lon, lat),
+            "failure_type": failure_type(inv),
             "citation": clean_text(inv.get("citation")),
             "body_excerpt": clean_text(body, 400),
         })
@@ -421,11 +431,16 @@ def main():
         year = f["date"].year if f["date"] else ""
         return f"{place} {year}"
     df["event_label"] = [label(r) for r in rows]
-    dup = df["event_label"].duplicated(keep=False) & (df["event_label"] != "")
-    for i in df.index[dup]:
-        f = links[df.at[i, "sb_id"]]
-        df.at[i, "event_label"] = f"{df.at[i, 'event_label']} ({f['date'].isoformat()})"
-    df["event_label"] = df["event_label"]
+    # label collisions between *different* event folders get the ISO date appended
+    folders_per_label = {}
+    for sb_id, lab in zip(df["sb_id"], df["event_label"]):
+        if lab:
+            folders_per_label.setdefault(lab, set()).add(links[sb_id]["id"])
+    for i in df.index:
+        lab = df.at[i, "event_label"]
+        if lab and len(folders_per_label[lab]) > 1:
+            f = links[df.at[i, "sb_id"]]
+            df.at[i, "event_label"] = f"{lab} ({f['date'].isoformat()})"
 
     df["n_features"] = df["n_features"].astype("Int64")
     df["shakemap_n_stations"] = df["shakemap_n_stations"].astype("Int64")
