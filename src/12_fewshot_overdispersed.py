@@ -32,8 +32,15 @@ def main(reps=30, only=None):
         _, inv = np.unique(X.blocks(ts, TILE), return_inverse=True); inv = inv.reshape(-1)
         b_or = brentq(lambda b: np.sum(w * (expit(m + b) - y)), -25, 25)
         data[e] = (m, y, w, inv, b_or)
-    SIG = np.arange(0.0, 3.01, 0.25)
-    prof = {e: H.sigma_profile(*data[e], sig_grid=SIG) for e in events}
+    # Profile likelihood over sigma_u: for every event and sigma, the conditional offset b_c that
+    # maximises the tile-marginal likelihood of the full inventory given the transferred scores.
+    SIG = np.arange(0.0, 4.01, 0.25)
+    prof, bcond = {}, {}
+    for e in events:
+        m, y, w, inv, _ = data[e]
+        _, L, _ = H.tile_shift_loglik(m, y, w, inv)
+        M = np.vstack([H._marginal_over_u(L, GRID, sg).sum(0) for sg in SIG])     # (len SIG, len GRID)
+        prof[e] = M.max(1); bcond[e] = GRID[M.argmax(1)]
     print("sigma profiles done", flush=True)
     rng = np.random.default_rng(7)
     draws = {}
@@ -48,9 +55,12 @@ def main(reps=30, only=None):
     rows, sig = [], {}
     for target in (only or events):
         m_all, y, w, inv, b_or = data[target]
-        o = offs[offs.target == target].iloc[0]; mu, tau = o.mu, o.tau
-        tot = sum(prof[e] for e in events if e != target); s_u = float(SIG[np.argmax(tot)])
-        sig[target] = dict(sigma_u=s_u, oracle_offset_target=b_or)
+        others = [e for e in events if e != target]
+        j = int(np.argmax(sum(prof[e] for e in others))); s_u = float(SIG[j])
+        bo = np.array([bcond[e][j] for e in others]); mu, tau = float(bo.mean()), float(bo.std(ddof=1))
+        b_or = float(bcond[target][j])        # oracle conditional offset of the target (full inventory)
+        sig[target] = dict(sigma_u=s_u, mu=mu, tau=tau, oracle_offset_target=b_or,
+                           other_offsets={e: float(bcond[e][j]) for e in others})
         tiles_all, _, A_all = H.tile_shift_loglik(m_all, y, w, inv)
         P0_all = H.tile_p0_matrix(A_all, GRID, s_u)
         ub = np.unique(inv); pos_tiles = np.unique(inv[y == 1])
