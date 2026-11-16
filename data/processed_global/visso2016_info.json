@@ -1,0 +1,15 @@
+{
+ "event": "visso2016",
+ "comcat_id": "us1000725y",
+ "label": "Visso 2016",
+ "crs": "EPSG:32633",
+ "area_km2": 673.3269,
+ "n_valid_cells": 748141,
+ "n_pos_cells": 204,
+ "n_landslides_inventory": 235,
+ "prevalence": 0.00027267587259620845,
+ "neg_rate": 0.20049459157997582,
+ "shakemap_n_stations": -1,
+ "pga_max": 0.3487785756587982,
+ "geometry_type": "Point"
+}

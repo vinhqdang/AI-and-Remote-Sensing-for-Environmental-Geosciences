@@ -1,0 +1,15 @@
+{
+ "event": "sichuanyunnanguizh2014",
+ "comcat_id": "usb000rzmg",
+ "label": "Sichuan-Yunnan-Guizhou Region 2014",
+ "crs": "EPSG:32648",
+ "area_km2": 362.7432,
+ "n_valid_cells": 403048,
+ "n_pos_cells": 1024,
+ "n_landslides_inventory": 1024,
+ "prevalence": 0.0025406403207558406,
+ "neg_rate": 0.3721488502447562,
+ "shakemap_n_stations": -1,
+ "pga_max": 0.3586259186267853,
+ "geometry_type": "Polygon"
+}

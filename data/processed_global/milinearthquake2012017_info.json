@@ -1,0 +1,15 @@
+{
+ "event": "milinearthquake2012017",
+ "comcat_id": "us2000bqsn",
+ "label": "Milin Earthquake 2017",
+ "crs": "EPSG:32646",
+ "area_km2": 1755.4158,
+ "n_valid_cells": 1950462,
+ "n_pos_cells": 762,
+ "n_landslides_inventory": 766,
+ "prevalence": 0.0003906766704503856,
+ "neg_rate": 0.0769047355063236,
+ "shakemap_n_stations": -1,
+ "pga_max": 0.2711646556854248,
+ "geometry_type": "Polygon"
+}

@@ -1,0 +1,15 @@
+{
+ "event": "jueili1998",
+ "comcat_id": "usp0008rnv",
+ "label": "Jueili 1998",
+ "crs": "EPSG:32651",
+ "area_km2": 999.8505,
+ "n_valid_cells": 1110945,
+ "n_pos_cells": 847,
+ "n_landslides_inventory": 847,
+ "prevalence": 0.0007624139808901431,
+ "neg_rate": 0.13501913732146412,
+ "shakemap_n_stations": 0,
+ "pga_max": 0.23657570779323578,
+ "geometry_type": "Polygon"
+}

@@ -249,3 +249,4 @@ data/global/cache/
 data/raw_global/
 data/processed_global/*.parquet
 results/global_log_*.txt
+data/global_all/

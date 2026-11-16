@@ -1,0 +1,15 @@
+{
+ "event": "gansu2013",
+ "comcat_id": "usb000ije3",
+ "label": "Gansu 2013",
+ "crs": "EPSG:32648",
+ "area_km2": 320.3784,
+ "n_valid_cells": 355976,
+ "n_pos_cells": 2169,
+ "n_landslides_inventory": 2330,
+ "prevalence": 0.0060931074004989105,
+ "neg_rate": 0.4213937196490511,
+ "shakemap_n_stations": -1,
+ "pga_max": 0.3506426513195038,
+ "geometry_type": "Polygon"
+}

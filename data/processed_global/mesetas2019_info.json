@@ -1,0 +1,15 @@
+{
+ "event": "mesetas2019",
+ "comcat_id": "us70006qp1",
+ "label": "Mesetas 2019",
+ "crs": "EPSG:32618",
+ "area_km2": 3100.9527,
+ "n_valid_cells": 3445503,
+ "n_pos_cells": 837,
+ "n_landslides_inventory": 838,
+ "prevalence": 0.0002429253435565141,
+ "neg_rate": 0.04353501536747337,
+ "shakemap_n_stations": 0,
+ "pga_max": 0.24812068045139313,
+ "geometry_type": "Polygon"
+}

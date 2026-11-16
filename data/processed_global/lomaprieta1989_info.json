@@ -1,0 +1,15 @@
+{
+ "event": "lomaprieta1989",
+ "comcat_id": "nc216859",
+ "label": "Loma Prieta 1989",
+ "crs": "EPSG:32610",
+ "area_km2": 1904.7519,
+ "n_valid_cells": 2116391,
+ "n_pos_cells": 1732,
+ "n_landslides_inventory": 1775,
+ "prevalence": 0.0008183742985110029,
+ "neg_rate": 0.06560631863395801,
+ "shakemap_n_stations": -1,
+ "pga_max": 0.9314655661582947,
+ "geometry_type": "Point"
+}

@@ -1,0 +1,15 @@
+{
+ "event": "centralitaly1997",
+ "comcat_id": "usp000881f",
+ "label": "Central Italy 1997",
+ "crs": "EPSG:32633",
+ "area_km2": 9229.5531,
+ "n_valid_cells": 10255059,
+ "n_pos_cells": 176,
+ "n_landslides_inventory": 179,
+ "prevalence": 1.7162261084992296e-05,
+ "neg_rate": 0.01462693212794827,
+ "shakemap_n_stations": 25,
+ "pga_max": 0.577024519443512,
+ "geometry_type": "Point"
+}

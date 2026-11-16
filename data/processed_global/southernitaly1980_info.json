@@ -1,0 +1,15 @@
+{
+ "event": "southernitaly1980",
+ "comcat_id": "usp0001ay4",
+ "label": "Southern Italy 1980",
+ "crs": "EPSG:32633",
+ "area_km2": 11265.0633,
+ "n_valid_cells": 12516737,
+ "n_pos_cells": 68,
+ "n_landslides_inventory": 199,
+ "prevalence": 5.432725797466225e-06,
+ "neg_rate": 0.011931780656784744,
+ "shakemap_n_stations": 27,
+ "pga_max": 1.3112151622772217,
+ "geometry_type": "Point"
+}

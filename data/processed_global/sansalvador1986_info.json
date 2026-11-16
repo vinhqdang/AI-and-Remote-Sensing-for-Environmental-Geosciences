@@ -1,0 +1,15 @@
+{
+ "event": "sansalvador1986",
+ "comcat_id": "usp0002yu9",
+ "label": "San Salvador 1986",
+ "crs": "EPSG:32616",
+ "area_km2": 368.0307,
+ "n_valid_cells": 408923,
+ "n_pos_cells": 267,
+ "n_landslides_inventory": 268,
+ "prevalence": 0.0006529346600704779,
+ "neg_rate": 0.36677593427919764,
+ "shakemap_n_stations": 0,
+ "pga_max": 0.5145236849784851,
+ "geometry_type": "Point"
+}

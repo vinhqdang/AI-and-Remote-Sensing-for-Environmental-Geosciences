@@ -1,0 +1,15 @@
+{
+ "event": "valledelaestrella11991",
+ "comcat_id": "usp0004qpg",
+ "label": "Valle de la Estrella 1991",
+ "crs": "EPSG:32617",
+ "area_km2": 2020.617,
+ "n_valid_cells": 2245130,
+ "n_pos_cells": 1643,
+ "n_landslides_inventory": 1643,
+ "prevalence": 0.0007318061760343499,
+ "neg_rate": 0.06681148945210767,
+ "shakemap_n_stations": 13,
+ "pga_max": 0.6703278422355652,
+ "geometry_type": "Polygon"
+}

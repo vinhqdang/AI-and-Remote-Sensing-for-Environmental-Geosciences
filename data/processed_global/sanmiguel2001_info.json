@@ -1,0 +1,15 @@
+{
+ "event": "sanmiguel2001",
+ "comcat_id": "usp000a7m5",
+ "label": "San Miguel 2001",
+ "crs": "EPSG:32616",
+ "area_km2": 8175.0789,
+ "n_valid_cells": 9083421,
+ "n_pos_cells": 134,
+ "n_landslides_inventory": 139,
+ "prevalence": 1.4752151199421451e-05,
+ "neg_rate": 0.015605744095237354,
+ "shakemap_n_stations": 10,
+ "pga_max": 0.678142786026001,
+ "geometry_type": "Point"
+}
