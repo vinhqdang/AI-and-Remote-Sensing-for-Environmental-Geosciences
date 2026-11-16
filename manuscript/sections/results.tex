@@ -1,0 +1,40 @@
+\section{Results}\label{sec:results}
+
+\input{tables/tab_events}
+
+\begin{figure}[t]\centering
+\includegraphics[width=\textwidth]{../figures/fig1_events.pdf}
+\caption{The nine Pacific Rim earthquakes analysed. Marker size scales with moment magnitude.}\label{fig:events}
+\end{figure}
+
+\begin{figure}[t]\centering
+\includegraphics[width=\textwidth]{../figures/fig2_kaikoura_inputs.pdf}
+\caption{Model inputs for the 2016 Kaik\={o}ura earthquake on the 30~m analysis grid (UTM zone 59S). (a) Copernicus GLO-30 hillshade and slope with the 28\,474 landslide cells of the GNS Science inventory; (b) USGS ShakeMap peak ground acceleration; (c) Newmark displacement computed with uniform generic strength parameters.}\label{fig:kaikoura_inputs}
+\end{figure}
+
+\subsection{Transfer of discrimination}
+Table~\ref{tab:loeo} and Figure~\ref{fig:loeo} summarise Experiment~1. Every transferred model discriminates landslide from non-landslide cells better than chance in most events. The ordering of the models, however, depends on the target event. The physics-constrained PC-GBM has the highest median AUC across held-out events (0.805), followed by the unconstrained GBM (0.790), the two Newmark models (0.763--0.764) and the global-style logistic regression (0.750). Its advantage lies in robustness more than in average skill. PC-GBM has the highest worst-case AUC of all models (0.730, Palu), whereas the worst cases of GBM (0.639) and the physics curve (0.559) fall in the low-shaking Ays\'en and Cinchona events. The global LR fails completely there, with AUC 0.247 and 0.397: its ranking is inverted.
+
+The spatial block bootstrap gives the paired differences. PC-GBM is significantly better than the global LR in seven events (95\% intervals exclude zero; median gain 0.06 AUC at Kaik\={o}ura and 0.37--0.51 at Cinchona and Ays\'en), equivalent at Palu and worse at Denali ($-0.024$). Compared with the unconstrained GBM, PC-GBM is significantly better at Northridge ($+0.025$), Niigata ($+0.014$), Iwate ($+0.037$) and Ays\'en ($+0.119$), equivalent at Kaik\={o}ura, Cinchona and Porgera, and worse at Denali ($-0.045$) and Palu ($-0.059$). The monotonic constraints therefore cost little where the unconstrained learner already transfers well, and they prevent large failures where it does not.
+
+Transfer does not reach the skill of a model fitted to the event itself. The local PC-GBM, evaluated with spatial-block cross-validation, has median AUC 0.838 and median AP lift 5.7, compared with 0.805 and 3.4 for the transferred PC-GBM. The gap ranges from almost nothing at Iwate (0.833 vs 0.834) to 0.08 at Northridge. For Kaik\={o}ura, PC-GBM trained only on the eight other Pacific Rim events reaches AUC 0.887 and concentrates landslides 9.2 times more than random (AP lift), against 0.934 and 16.8 for the local model.
+
+\input{tables/tab_loeo}
+
+\begin{figure}[t]\centering
+\includegraphics[width=\textwidth]{../figures/fig3_loeo.pdf}
+\caption{Leave-one-event-out transfer of five models to each of the nine earthquakes. (a) ROC AUC; (b) average precision divided by prevalence; (c) ratio of expected to observed landslide cells (log scale, ideal 1). Vertical bars show a PC-GBM trained and tested within the event by spatial-block cross-validation.}\label{fig:loeo}
+\end{figure}
+
+\subsection{Why the global logistic model inverts}
+The inversion of the global LR at Ays\'en and Cinchona follows from its functional form under covariate shift. Fitted on the other eight events, the model has a negative main effect of slope and a positive slope--PGV interaction (Supplementary Section~\ref{sec:supp_lr}). The marginal effect of slope on the log-odds therefore changes sign below a PGV of about 4~cm\,s$^{-1}$ (Ays\'en fit) or 9~cm\,s$^{-1}$ (Cinchona fit). The ShakeMaps of these two events have median PGV of 4.0 and 10.1~cm\,s$^{-1}$, and at Ays\'en 95\% of cells lie below the first percentile of training PGV. The LR thus extrapolates a fitted interaction into a shaking range where it predicts that steeper slopes are \emph{safer}, contrary to the mechanics of slope failure. Tree ensembles extrapolate as constants beyond the training range and do not invert. With the monotonic constraint, PC-GBM keeps the physically correct ordering of slope and shaking even within the range.
+
+\subsection{Transfer of calibration}
+Transferred models rank hillslopes reasonably well, but their probabilities are badly calibrated (Figure~\ref{fig:loeo}c; Figure~\ref{fig:reliability}). For PC-GBM the expected-to-observed ratio of landslide cells ranges from 0.02 at Cinchona (50 times too few landslides predicted) to 23 at Denali (23 times too many), and lies within a factor of two of the truth in only four of the nine events (Kaik\={o}ura, Northridge, Ays\'en and Palu). The uncalibrated Newmark--Weibull curve of \citet{jibson2000} overpredicts in eight events, by a factor of 8 at Kaik\={o}ura and up to 228 at Denali. Its calibration slopes of 0.1--0.4 show that its probabilities are also far too spread out. In contrast, the calibration slopes of the transferred PC-GBM are close to one (median 1.07, range 0.82--1.53). The miscalibration of the learned models is therefore mostly a \emph{shift} in the overall level of landslide occurrence, not an error in the shape of the response. This is the behaviour expected when the event-level base rate differs between source and target, and it can be corrected by recalibrating the intercept, which motivates Experiment~2.
+
+Brier skill scores are close to zero for all fitted models, including the local models (local PC-GBM: 0.000--0.017; transferred PC-GBM: $-0.20$ to $+0.01$), and strongly negative for the uncalibrated physics curve. With landslide prevalence of 0.01--1\%, the squared-error gain from ranking is small compared with the cost of any error in the base rate. BSS is therefore a poor guide to the usefulness of a coseismic model, and we use $E/O$ and the calibration slope as the main calibration diagnostics.
+
+\begin{figure}[t]\centering
+\includegraphics[width=\textwidth]{../figures/fig4_reliability.pdf}
+\caption{Reliability diagrams of transferred Global LR and PC-GBM models for each held-out event (log--log axes; predictions grouped into 12 quantile bins). Points above the diagonal indicate underprediction, below the diagonal overprediction.}\label{fig:reliability}
+\end{figure}

@@ -1,0 +1,14 @@
+{
+ "event": "denali2002",
+ "crs": "EPSG:32606",
+ "H": 4962,
+ "W": 10577,
+ "n_landslides_inventory": 1579,
+ "n_points_in_domain": 1579,
+ "n_valid_cells": 17497281,
+ "area_km2": 15747.5529,
+ "n_pos_cells": 1579,
+ "prevalence": 9.024259254909377e-05,
+ "pga_max": 0.7353807091712952,
+ "pga_mean_pos": 0.4920254647731781
+}

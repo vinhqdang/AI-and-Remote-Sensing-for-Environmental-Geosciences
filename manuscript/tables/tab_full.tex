@@ -1,0 +1,67 @@
+\begin{longtable}{llrrrrrr}
+\caption{All performance metrics of Experiment~1. AP lift: average precision divided by prevalence; BSS: Brier skill score relative to a forecast that knows the true prevalence; $E/O$: expected over observed landslide cells; slope and intercept: logistic calibration of outcomes on predicted log-odds.}\label{tab:full}\\
+\toprule Event & Model & AUC & AP lift & BSS & $E/O$ & Cal. slope & Cal. int.\\\midrule\endhead
+Kaik\={o}ura 2016 (NZ) & Physics (Jibson 2000) & 0.883 & 9.59 & -1.637 & 8.28 & 0.36 & -3.61\\
+Kaik\={o}ura 2016 (NZ) & Physics-logit & 0.861 & 9.20 & 0.007 & 1.5 & 2.19 & 5.81\\
+Kaik\={o}ura 2016 (NZ) & Global LR & 0.826 & 9.91 & 0.009 & 1.63 & 1.53 & 2.12\\
+Kaik\={o}ura 2016 (NZ) & GBM & 0.894 & 7.48 & 0.007 & 0.691 & 1.14 & 1.15\\
+Kaik\={o}ura 2016 (NZ) & PC-GBM & 0.887 & 9.24 & 0.010 & 1.5 & 1.07 & -0.15\\
+Kaik\={o}ura 2016 (NZ) & PC-GBM (local CV) & 0.934 & 16.79 & 0.017 & 1.03 & 0.90 & -0.46\\
+\midrule
+Northridge 1994 (USA) & Physics (Jibson 2000) & 0.715 & 3.61 & -0.361 & 1.88 & 0.22 & -3.56\\
+Northridge 1994 (USA) & Physics-logit & 0.756 & 3.36 & 0.002 & 1.14 & 1.00 & -0.16\\
+Northridge 1994 (USA) & Global LR & 0.723 & 3.94 & 0.002 & 1.44 & 1.03 & -0.17\\
+Northridge 1994 (USA) & GBM & 0.788 & 2.43 & -0.029 & 1.04 & 0.43 & -3.00\\
+Northridge 1994 (USA) & PC-GBM & 0.814 & 5.02 & 0.004 & 0.937 & 0.96 & -0.13\\
+Northridge 1994 (USA) & PC-GBM (local CV) & 0.893 & 8.92 & 0.009 & 1.01 & 0.97 & -0.12\\
+\midrule
+Niigata-Chuetsu 2004 (JP) & Physics (Jibson 2000) & 0.763 & 2.96 & -0.127 & 1.18 & 0.22 & -2.75\\
+Niigata-Chuetsu 2004 (JP) & Physics-logit & 0.767 & 2.94 & -0.005 & 0.175 & 1.50 & 4.74\\
+Niigata-Chuetsu 2004 (JP) & Global LR & 0.750 & 3.27 & -0.002 & 0.197 & 0.82 & 0.64\\
+Niigata-Chuetsu 2004 (JP) & GBM & 0.774 & 2.84 & -0.005 & 0.123 & 0.72 & 0.43\\
+Niigata-Chuetsu 2004 (JP) & PC-GBM & 0.788 & 3.21 & -0.001 & 0.226 & 0.88 & 0.86\\
+Niigata-Chuetsu 2004 (JP) & PC-GBM (local CV) & 0.809 & 3.19 & 0.010 & 1 & 0.73 & -1.03\\
+\midrule
+Iwate-Miyagi 2008 (JP) & Physics (Jibson 2000) & 0.777 & 4.06 & -1.295 & 7.76 & 0.40 & -3.59\\
+Iwate-Miyagi 2008 (JP) & Physics-logit & 0.764 & 3.86 & 0.004 & 0.73 & 1.79 & 4.59\\
+Iwate-Miyagi 2008 (JP) & Global LR & 0.750 & 4.56 & 0.008 & 0.978 & 0.96 & -0.16\\
+Iwate-Miyagi 2008 (JP) & GBM & 0.796 & 4.58 & 0.008 & 1.19 & 1.00 & -0.17\\
+Iwate-Miyagi 2008 (JP) & PC-GBM & 0.833 & 5.60 & -0.010 & 2.58 & 1.20 & -0.24\\
+Iwate-Miyagi 2008 (JP) & PC-GBM (local CV) & 0.834 & 5.74 & 0.008 & 1.03 & 0.80 & -0.92\\
+\midrule
+Ais\'{e}n 2007 (CL) & Physics (Jibson 2000) & 0.609 & 1.66 & -27.005 & 82.9 & 0.11 & -6.69\\
+Ais\'{e}n 2007 (CL) & Physics-logit & 0.739 & 2.53 & -0.318 & 16.8 & 1.55 & -0.37\\
+Ais\'{e}n 2007 (CL) & Global LR & 0.247 & 0.60 & -0.068 & 10.8 & -0.81 & -13.05\\
+Ais\'{e}n 2007 (CL) & GBM & 0.639 & 1.64 & -0.000 & 1.12 & 0.99 & -0.12\\
+Ais\'{e}n 2007 (CL) & PC-GBM & 0.760 & 3.34 & 0.000 & 1.11 & 0.99 & -0.12\\
+Ais\'{e}n 2007 (CL) & PC-GBM (local CV) & 0.826 & 3.90 & -0.000 & 1.04 & 0.98 & -0.11\\
+\midrule
+Denali 2002 (USA) & Physics (Jibson 2000) & 0.831 & 3.92 & -61.682 & 228 & 0.31 & -6.91\\
+Denali 2002 (USA) & Physics-logit & 0.845 & 3.82 & -0.363 & 41.7 & 1.65 & -0.32\\
+Denali 2002 (USA) & Global LR & 0.830 & 4.26 & -0.412 & 39.5 & 1.65 & -0.32\\
+Denali 2002 (USA) & GBM & 0.850 & 4.65 & -0.328 & 21.8 & 1.55 & -0.29\\
+Denali 2002 (USA) & PC-GBM & 0.805 & 3.44 & -0.201 & 23.4 & 1.53 & -0.26\\
+Denali 2002 (USA) & PC-GBM (local CV) & 0.883 & 9.15 & 0.000 & 0.999 & 1.00 & -0.09\\
+\midrule
+Cinchona 2009 (CR) & Physics (Jibson 2000) & 0.559 & 1.47 & -0.246 & 0.934 & 0.13 & -3.33\\
+Cinchona 2009 (CR) & Physics-logit & 0.734 & 2.52 & -0.001 & 0.31 & 0.78 & -0.12\\
+Cinchona 2009 (CR) & Global LR & 0.397 & 0.74 & -0.004 & 0.365 & -0.40 & -7.51\\
+Cinchona 2009 (CR) & GBM & 0.780 & 3.94 & -0.006 & 0.0184 & 0.86 & 2.84\\
+Cinchona 2009 (CR) & PC-GBM & 0.774 & 2.94 & -0.006 & 0.0213 & 0.82 & 2.37\\
+Cinchona 2009 (CR) & PC-GBM (local CV) & 0.812 & 4.96 & 0.008 & 0.982 & 0.81 & -0.79\\
+\midrule
+Porgera 2018 (PNG) & Physics (Jibson 2000) & 0.885 & 9.77 & -9.588 & 35.9 & 0.35 & -5.02\\
+Porgera 2018 (PNG) & Physics-logit & 0.892 & 9.82 & -0.037 & 8.77 & 1.38 & -0.23\\
+Porgera 2018 (PNG) & Global LR & 0.847 & 11.57 & -0.101 & 10.1 & 1.42 & -0.26\\
+Porgera 2018 (PNG) & GBM & 0.876 & 8.55 & -0.052 & 5.56 & 1.29 & -0.21\\
+Porgera 2018 (PNG) & PC-GBM & 0.872 & 9.05 & -0.097 & 8.84 & 1.40 & -0.25\\
+Porgera 2018 (PNG) & PC-GBM (local CV) & 0.934 & 18.67 & 0.004 & 1.02 & 0.98 & -0.10\\
+\midrule
+Palu 2018 (ID) & Physics (Jibson 2000) & 0.742 & 3.00 & -1.974 & 8.69 & 0.19 & -4.58\\
+Palu 2018 (ID) & Physics-logit & 0.762 & 3.03 & -0.001 & 2.07 & 1.10 & -0.19\\
+Palu 2018 (ID) & Global LR & 0.733 & 3.34 & -0.006 & 2.44 & 1.13 & -0.20\\
+Palu 2018 (ID) & GBM & 0.790 & 3.86 & 0.002 & 0.816 & 0.94 & -0.12\\
+Palu 2018 (ID) & PC-GBM & 0.730 & 2.49 & -0.004 & 1.89 & 1.08 & -0.17\\
+Palu 2018 (ID) & PC-GBM (local CV) & 0.838 & 4.61 & 0.002 & 0.97 & 0.96 & -0.12\\
+\bottomrule
+\end{longtable}

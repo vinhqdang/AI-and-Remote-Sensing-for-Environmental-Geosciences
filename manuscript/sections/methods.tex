@@ -1,0 +1,37 @@
+\section{Methods}\label{sec:methods}
+
+\subsection{Physics feature: Newmark displacement}
+Each cell is treated as an infinite slope with uniform, deliberately generic strength: effective friction angle $\phi'=32^\circ$, effective cohesion $c'=15$~kPa, unit weight $\gamma=20$~kN\,m$^{-3}$, slope-normal failure thickness $t=3$~m and dry conditions. These values follow the regional Newmark practice of \citet{jibson2000}, without event-specific geotechnical calibration. The static factor of safety and the critical acceleration (in units of $g$) are
+\begin{equation}
+FS = \frac{c'}{\gamma t \sin\alpha} + \frac{\tan\phi'}{\tan\alpha}, \qquad a_c = (FS-1)\sin\alpha ,
+\end{equation}
+where $\alpha$ is the slope angle. Permanent displacement $D_N$ (cm) is estimated from the ratio of $a_c$ to the ShakeMap PGA, $a_{\max}$, with the regression of \citet{jibson2007}:
+\begin{equation}
+\log_{10} D_N = 0.215 + \log_{10}\!\left[\left(1-\frac{a_c}{a_{\max}}\right)^{2.341}\left(\frac{a_c}{a_{\max}}\right)^{-1.438}\right], \qquad a_c<a_{\max},
+\end{equation}
+with $D_N=0$ where $a_c\ge a_{\max}$. Cells that are statically unstable ($FS<1$) are assigned a large displacement ($10^{2.5}$~cm). We use $\log_{10}(D_N+0.1)$ as a predictor. As a zero-parameter physics model we also map $D_N$ to failure probability with the Weibull curve calibrated on Northridge, $P=0.335\,[1-\exp(-0.048\,D_N^{1.565})]$ \citep{jibson2000}.
+
+\subsection{Models}
+Five models of increasing flexibility were compared, all using the same inputs.
+\begin{description}
+\item[Physics (Jibson 2000).] The Weibull curve above, with no fitting.
+\item[Physics-logit.] Logistic regression on $\log_{10}(D_N+0.1)$ and slope. This keeps the Newmark mechanics but re-estimates the displacement--probability relation from the training events.
+\item[Global LR.] Logistic regression on $\log_{10}$PGV, slope, their interaction and local relief. This mirrors the structure of the USGS global model \citep{nowickijessee2018} restricted to inputs available everywhere; lithology, land cover and wetness layers were not used.
+\item[GBM.] Gradient-boosted trees \citep{friedman2001,chen2016} on the eleven predictors: eight terrain variables, $\log_{10}$PGA, $\log_{10}$PGV and $\log_{10}(D_N+0.1)$.
+\item[PC-GBM.] The same learner and predictors, with monotonic constraints so that the predicted probability can only stay the same or increase with PGA, PGV, Newmark displacement, slope, maximum slope and local relief. The constraint encodes the physical expectation that stronger shaking or steeper, higher hillslopes cannot reduce the chance of failure, all else equal. It is a lightweight form of theory-guided learning \citep{karpatne2017}.
+\end{description}
+Both boosted models used the same fixed hyperparameters (400 trees, depth 4, learning rate 0.05, row and column subsampling 0.8, minimum child weight 5) and the \texttt{hist} algorithm of XGBoost 3.4. Hyperparameters were set a priori and never tuned on the held-out events, so the comparison does not favour either model.
+
+\subsection{Sampling and weighting}
+Each event domain contains between $4\times10^5$ and $2.7\times10^7$ cells. We kept all positive cells and a uniform random sample of $2.5\times10^5$ negative cells per event. Each negative was weighted by the inverse of its sampling fraction, so every weighted statistic refers to the full domain at its natural prevalence. During training, weights were also rescaled so that every training event has the same total weight. Without this, Kaik\={o}ura and Porgera would dominate the model; with it, each event counts as one independent realisation of coseismic landsliding.
+
+\subsection{Experiment 1: leave-one-event-out transfer}
+For each target event, the models were trained on the other eight events and evaluated on all cells of the target. As a local reference, which represents performance obtainable only after an inventory exists, PC-GBM was also evaluated within each event by five-fold spatial block cross-validation with 5~km blocks \citep{roberts2017}. Performance is reported on two axes. \emph{Discrimination} is measured with the area under the ROC curve (AUC) and the average precision divided by prevalence (AP lift, the factor by which the model concentrates landslides over random guessing). \emph{Calibration} is measured with the expected-to-observed ratio of landslide cells ($E/O=\sum_i w_i p_i / \sum_i w_i y_i$), the calibration slope and intercept from a logistic regression of outcomes on the predicted log-odds \citep{steyerberg2004,vancalster2019}, and the Brier skill score (BSS) relative to a climatological forecast that already knows the true prevalence \citep{brier1950}. Because BSS is referenced to the true prevalence, a transferred model must both rank and calibrate well to score above zero. Uncertainty in the AUC differences between models was estimated with a spatial block bootstrap (200 resamples of 5~km blocks).
+
+\subsection{Experiment 2: few-shot recalibration}
+In practice, emergency mapping delivers complete landslide maps for a few image tiles within days \citep{williams2018,handwerger2022}, long before an event-wide inventory exists. We simulated this by drawing $k\in\{1,2,5,10,20,40\}$ random $3\times3$~km tiles that contain at least one landslide, as an analyst would target visibly affected terrain. All cells in those tiles were labelled, and evaluation used the remaining cells of the event. Three updating strategies were applied to the transferred PC-GBM \citep{janssen2008}: (i) intercept-only recalibration, which shifts the log-odds by a constant $a$ chosen so that predicted and observed landslide counts agree in the mapped tiles; (ii) logistic (Platt) recalibration, which re-estimates intercept and slope; and (iii) for comparison, a new PC-GBM trained only on the mapped tiles. Each $(k,\text{event})$ combination was repeated 30 times with different random tiles.
+
+\subsection{Experiment 3: attribution stability and physical consistency}
+To test whether models learn the same controls in different earthquakes, we trained event-specific GBM and PC-GBM models and computed exact TreeSHAP values \citep{lundberg2020} for $2\times10^4$ cells per event. Stability was measured by the mean pairwise Spearman correlation between events of the mean absolute SHAP values of the eleven predictors, and by Kendall's coefficient of concordance $W$. Physical consistency of the transferred models was tested directly. For each held-out cell, PGA and PGV were increased by 10\%, Newmark displacement was recomputed, and we recorded the fraction of cells whose predicted probability \emph{decreased}. Such a decrease is a physically implausible response.
+
+All processing used open data and open-source software (Python, GDAL/rasterio, XGBoost, scikit-learn). The code that reproduces every number and figure is available in the accompanying repository.

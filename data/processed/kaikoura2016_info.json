@@ -1,0 +1,14 @@
+{
+ "event": "kaikoura2016",
+ "crs": "EPSG:32759",
+ "H": 5635,
+ "W": 5408,
+ "n_landslides_inventory": 29519,
+ "n_points_in_domain": 29519,
+ "n_valid_cells": 12036071,
+ "area_km2": 10832.4639,
+ "n_pos_cells": 28474,
+ "prevalence": 0.002365722169634925,
+ "pga_max": 1.6082403659820557,
+ "pga_mean_pos": 0.6447122097015381
+}

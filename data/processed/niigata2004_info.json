@@ -1,0 +1,14 @@
+{
+ "event": "niigata2004",
+ "crs": "EPSG:32654",
+ "H": 674,
+ "W": 793,
+ "n_landslides_inventory": 4862,
+ "n_points_in_domain": 4862,
+ "n_valid_cells": 455290,
+ "area_km2": 409.761,
+ "n_pos_cells": 4860,
+ "prevalence": 0.01067451514419381,
+ "pga_max": 0.8196302056312561,
+ "pga_mean_pos": 0.7045262455940247
+}

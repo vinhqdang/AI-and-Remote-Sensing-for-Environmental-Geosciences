@@ -1,0 +1,50 @@
+            event       n    pos
+0       aisen2007  250512    512
+1    cinchona2009  254743   4743
+2      denali2002  251579   1579
+3       iwate2008  254093   4093
+4    kaikoura2016  278474  28474
+5     niigata2004  254860   4860
+6  northridge1994  260925  10925
+7        palu2018  257007   7007
+8     porgera2018  260455  10455
+kaikoura2016 done
+northridge1994 done
+niigata2004 done
+iwate2008 done
+aisen2007 done
+denali2002 done
+cinchona2009 done
+porgera2018 done
+palu2018 done
+                                             auc   ap_lift  ...  e_over_o  cal_slope
+setting          model                                      ...                     
+LOEO transfer    GBM                    0.789799  3.941996  ...  1.043620   0.992627
+                 Global LR              0.750154  3.939427  ...  1.634818   1.034774
+                 PC-GBM                 0.805117  3.438050  ...  1.504807   1.065132
+                 Physics (Jibson 2000)  0.762985  3.612049  ...  8.283853   0.222515
+                 Physics-logit          0.764444  3.359978  ...  1.496974   1.495968
+Local spatial CV PC-GBM                 0.837644  5.741190  ...  1.014540   0.961772
+
+[6 rows x 5 columns]
+            event      diff        lo        hi
+0    kaikoura2016  0.059932  0.046813  0.076222
+1  northridge1994  0.091412  0.076725  0.109514
+2     niigata2004  0.036941  0.019307  0.058165
+3       iwate2008  0.082800  0.069332  0.098299
+4       aisen2007  0.511687  0.450761  0.558630
+5      denali2002 -0.024129 -0.038313 -0.011789
+6    cinchona2009  0.374063  0.266353  0.457072
+7     porgera2018  0.023934  0.016235  0.031177
+8        palu2018 -0.003342 -0.022373  0.015088
+            event      diff        lo        hi
+0    kaikoura2016 -0.006668 -0.017284  0.004605
+1  northridge1994  0.025365  0.005098  0.047254
+2     niigata2004  0.013710  0.000653  0.026196
+3       iwate2008  0.036762  0.020798  0.056840
+4       aisen2007  0.118634  0.086144  0.148241
+5      denali2002 -0.044641 -0.052923 -0.035689
+6    cinchona2009 -0.004381 -0.018870  0.010031
+7     porgera2018 -0.004971 -0.012394  0.003937
+8        palu2018 -0.059227 -0.074619 -0.042778
+E2 kaikoura2016

@@ -1,0 +1,14 @@
+{
+ "event": "iwate2008",
+ "crs": "EPSG:32654",
+ "H": 1485,
+ "W": 990,
+ "n_landslides_inventory": 4164,
+ "n_points_in_domain": 4164,
+ "n_valid_cells": 863225,
+ "area_km2": 776.9025,
+ "n_pos_cells": 4093,
+ "prevalence": 0.004741521619508239,
+ "pga_max": 1.1977425813674927,
+ "pga_mean_pos": 0.9638495445251465
+}

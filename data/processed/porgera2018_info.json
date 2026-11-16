@@ -1,0 +1,14 @@
+{
+ "event": "porgera2018",
+ "crs": "EPSG:32754",
+ "H": 6969,
+ "W": 7107,
+ "n_landslides_inventory": 10469,
+ "n_points_in_domain": 10469,
+ "n_valid_cells": 27006355,
+ "area_km2": 24305.7195,
+ "n_pos_cells": 10455,
+ "prevalence": 0.0003871311030311199,
+ "pga_max": 1.0502173900604248,
+ "pga_mean_pos": 0.5306211709976196
+}

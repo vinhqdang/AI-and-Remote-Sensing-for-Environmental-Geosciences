@@ -1,0 +1,14 @@
+{
+ "event": "cinchona2009",
+ "crs": "EPSG:32616",
+ "H": 1047,
+ "W": 841,
+ "n_landslides_inventory": 4826,
+ "n_points_in_domain": 4826,
+ "n_valid_cells": 708328,
+ "area_km2": 637.4952,
+ "n_pos_cells": 4743,
+ "prevalence": 0.006696050417320789,
+ "pga_max": 0.26700106263160706,
+ "pga_mean_pos": 0.18736858665943146
+}

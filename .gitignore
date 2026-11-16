@@ -218,3 +218,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# large derived / downloaded data (re-created by src/01-03 scripts)
+data/raw/
+data/processed/*.npz
+data/processed/*.parquet
+results/*.parquet
+manuscript/*.aux
+manuscript/*.log
+manuscript/*.out
+manuscript/*.bbl
+manuscript/*.blg
+manuscript/*.synctex.gz

@@ -1,0 +1,69 @@
+== kaikoura2016
+  grid 5635 5408 EPSG:32759 27427 km2 bbox
+   tile -44 172
+   tile -44 173
+   tile -43 172
+   tile -43 173
+   tile -43 174
+   tile -42 172
+   tile -42 173
+   tile -42 174
+   {'event': 'kaikoura2016', 'crs': 'EPSG:32759', 'H': 5635, 'W': 5408, 'n_landslides_inventory': 29519, 'n_points_in_domain': 29519, 'n_valid_cells': 12036071, 'area_km2': 10832.4639, 'n_pos_cells': 28474, 'prevalence': 0.002365722169634925, 'pga_max': 1.6082403659820557, 'pga_mean_pos': 0.6447122097015381}
+== northridge1994
+  grid 2646 2948 EPSG:32611 7020 km2 bbox
+   tile 33 -120
+   tile 33 -119
+   tile 34 -120
+   tile 34 -119
+   {'event': 'northridge1994', 'crs': 'EPSG:32611', 'H': 2646, 'W': 2948, 'n_landslides_inventory': 11111, 'n_points_in_domain': 11111, 'n_valid_cells': 4863262, 'area_km2': 4376.9358, 'n_pos_cells': 10925, 'prevalence': 0.002246434594722637, 'pga_max': 0.8683789968490601, 'pga_mean_pos': 0.48407310247421265}
+== niigata2004
+  grid 674 793 EPSG:32654 481 km2 bbox
+   tile 37 138
+   tile 37 139
+   {'event': 'niigata2004', 'crs': 'EPSG:32654', 'H': 674, 'W': 793, 'n_landslides_inventory': 4862, 'n_points_in_domain': 4862, 'n_valid_cells': 455290, 'area_km2': 409.761, 'n_pos_cells': 4860, 'prevalence': 0.01067451514419381, 'pga_max': 0.8196302056312561, 'pga_mean_pos': 0.7045262455940247}
+== iwate2008
+  grid 1485 990 EPSG:32654 1323 km2 bbox
+   tile 38 140
+   tile 38 141
+   tile 39 140
+   tile 39 141
+   {'event': 'iwate2008', 'crs': 'EPSG:32654', 'H': 1485, 'W': 990, 'n_landslides_inventory': 4164, 'n_points_in_domain': 4164, 'n_valid_cells': 863225, 'area_km2': 776.9025, 'n_pos_cells': 4093, 'prevalence': 0.004741521619508239, 'pga_max': 1.1977425813674927, 'pga_mean_pos': 0.9638495445251465}
+== denali2002
+  grid 4962 10577 EPSG:32606 47235 km2 bbox
+   tile 62 -149
+   tile 62 -148
+   tile 62 -147
+   tile 62 -146
+   tile 62 -145
+   tile 62 -144
+   tile 62 -143
+   tile 62 -142
+   tile 63 -149
+   tile 63 -148
+   tile 63 -147
+   tile 63 -146
+   tile 63 -145
+   tile 63 -144
+   tile 63 -143
+   tile 63 -142
+   {'event': 'denali2002', 'crs': 'EPSG:32606', 'H': 4962, 'W': 10577, 'n_landslides_inventory': 1579, 'n_points_in_domain': 1579, 'n_valid_cells': 17497281, 'area_km2': 15747.5529, 'n_pos_cells': 1579, 'prevalence': 9.024259254909377e-05, 'pga_max': 0.7353807091712952, 'pga_mean_pos': 0.4920254647731781}
+== cinchona2009
+Traceback (most recent call last):
+  File "/home/user/AI-and-Remote-Sensing-for-Environmental-Geosciences/src/03_build_features.py", line 237, in <module>
+    process(k)
+    ~~~~~~~^^^
+  File "/home/user/AI-and-Remote-Sensing-for-Environmental-Geosciences/src/03_build_features.py", line 168, in process
+    dom = inv.to_crs(crs).unary_union.convex_hull.buffer(2000)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/site-packages/geopandas/base.py", line 2502, in unary_union
+    return self.geometry.values.union_all()
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/local/lib/python3.13/site-packages/geopandas/array.py", line 1008, in union_all
+    return shapely.union_all(self._data, grid_size=grid_size)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/site-packages/shapely/decorators.py", line 184, in wrapper
+    result = func(*args, **kwargs)
+  File "/usr/local/lib/python3.13/site-packages/shapely/set_operations.py", line 545, in union_all
+    return lib.unary_union(collections, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+shapely.errors.GEOSException: TopologyException: side location conflict at 803990.66961052374 1130088.9396077388. This can occur if the input geometry is invalid.

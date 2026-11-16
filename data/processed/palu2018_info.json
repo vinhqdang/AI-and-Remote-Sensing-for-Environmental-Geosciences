@@ -1,0 +1,14 @@
+{
+ "event": "palu2018",
+ "crs": "EPSG:32750",
+ "H": 3426,
+ "W": 1940,
+ "n_landslides_inventory": 7063,
+ "n_points_in_domain": 7063,
+ "n_valid_cells": 4072399,
+ "area_km2": 3665.1591,
+ "n_pos_cells": 7007,
+ "prevalence": 0.0017206074355680767,
+ "pga_max": 0.8837921023368835,
+ "pga_mean_pos": 0.43472737073898315
+}

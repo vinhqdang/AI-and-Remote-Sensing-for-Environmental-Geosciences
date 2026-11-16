@@ -1,0 +1,14 @@
+{
+ "event": "northridge1994",
+ "crs": "EPSG:32611",
+ "H": 2646,
+ "W": 2948,
+ "n_landslides_inventory": 11111,
+ "n_points_in_domain": 11111,
+ "n_valid_cells": 4863262,
+ "area_km2": 4376.9358,
+ "n_pos_cells": 10925,
+ "prevalence": 0.002246434594722637,
+ "pga_max": 0.8683789968490601,
+ "pga_mean_pos": 0.48407310247421265
+}
