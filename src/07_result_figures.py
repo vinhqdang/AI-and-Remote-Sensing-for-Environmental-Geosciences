@@ -81,26 +81,69 @@ def fig_reliability(df):
 
 
 def fig_fewshot():
-    r = pd.read_csv(os.path.join(R, "e2_fewshot.csv"))
-    meth = ["Transfer (no recalibration)", "Transfer + intercept recalibration", "Transfer + Platt recalibration", "Local PC-GBM (mapped tiles only)"]
-    c = ["#8c8c8c", "#e15759", "#4e79a7", "#59a14f"]
+    """E5: few-shot updating, identical tile draws for all methods."""
+    r = pd.read_csv(os.path.join(R, "e5_hiphy_fewshot.csv"))
+    meth = ["PC-GBM + intercept recal.", "PC-GBM + Platt recal.", "HiPhyBoost + MLE offset",
+            "HiPhyBoost + Bayes (naive)", "HiPhyBoost + Bayes (selection-corrected)"]
+    lab = {"HiPhyBoost + Bayes (selection-corrected)": "HiPhyBoost + selection-aware Bayes"}
+    c = ["#8c8c8c", "#4e79a7", "#b07aa1", "#f28e2b", "#e15759"]
+    r["abs_log2_eo"] = np.abs(np.log2(r.e_over_o))
+    g = r.groupby(["method", "k", "event"]).agg(auc=("auc", "median"), eo=("abs_log2_eo", "median"),
+                                                 cov=("covered", "mean")).reset_index()
     fig, axs = plt.subplots(1, 3, figsize=(7.1, 2.6))
-    # per-event median over repetitions, then median and IQR over events
-    g = r.groupby(["method", "k", "event"]).agg(auc=("auc", "median"), bss=("bss", "median"),
-                                                 eo=("e_over_o", lambda x: np.median(np.abs(np.log2(x))))).reset_index()
-    for ax, (m, lab) in zip(axs, [("auc", "ROC AUC"), ("bss", "Brier skill score"), ("eo", "|log$_2$(E/O)|")]):
+    panels = [("auc", "ROC AUC (unmapped area)"), ("eo", "|log$_2$(E/O)| (unmapped area)"), ("cov", "90% interval coverage")]
+    for ax, (m, ylab) in zip(axs, panels):
         for mm, cc in zip(meth, c):
-            d = g[g.method == mm].groupby("k")[m]
+            d = g[g.method == mm]
+            if m == "cov" and d[m].isna().all():
+                continue
+            d = d.groupby("k")[m]
             med, lo, hi = d.median(), d.quantile(0.25), d.quantile(0.75)
-            ax.plot(med.index, med.values, marker="o", ms=3, color=cc, label=mm)
-            ax.fill_between(med.index, lo.values, hi.values, color=cc, alpha=0.15, lw=0)
-        ax.set_xscale("log"); ax.set_xlabel("Mapped 3 × 3 km tiles (k)"); ax.set_ylabel(lab)
+            if m == "cov":
+                med = g[g.method == mm].groupby("k")[m].mean()
+                ax.plot(med.index, med.values, marker="o", ms=3, color=cc, label=lab.get(mm, mm))
+            else:
+                ax.plot(med.index, med.values, marker="o", ms=3, color=cc, label=lab.get(mm, mm))
+                ax.fill_between(med.index, lo.values, hi.values, color=cc, alpha=0.12, lw=0)
+        ax.set_xscale("log"); ax.set_xlabel("Mapped 3 × 3 km tiles (k)"); ax.set_ylabel(ylab)
         ax.set_xticks([1, 2, 5, 10, 20, 40]); ax.set_xticklabels([1, 2, 5, 10, 20, 40])
+    axs[2].axhline(0.9, color="k", lw=0.6, ls="--"); axs[2].set_ylim(0, 1.02)
+    axs[1].axhline(1, color="k", lw=0.6, ls=":")
     for a, t in zip(axs, "abc"): a.set_title(f"({t})", loc="left", fontweight="bold")
     h, l = axs[0].get_legend_handles_labels()
-    fig.legend(h, l, ncol=2, loc="lower center", bbox_to_anchor=(0.5, -0.2), frameon=False)
+    fig.legend(h, l, ncol=3, loc="upper center", bbox_to_anchor=(0.5, 0.0), frameon=False)
     fig.tight_layout()
     save(fig, "fig5_fewshot")
+
+
+def fig_offsets():
+    """Event offsets b_e of HiPhyBoost (all nine events) and zero-shot 90% intervals of E/O."""
+    off = pd.read_csv(os.path.join(R, "hiphy_offsets_all.csv")).set_index("event")
+    e4 = pd.read_csv(os.path.join(R, "e4_hiphy_loeo.csv"))
+    e1 = pd.read_csv(os.path.join(R, "e1_loeo_metrics.csv"))
+    zs = e4[e4.method == "HiPhyBoost (zero-shot Bayes)"].set_index("event")
+    pc = e1[(e1.model == "PC-GBM") & (e1.setting == "LOEO transfer")].set_index("event")
+    order = off.b_e.sort_values().index.tolist()
+    fig, axs = plt.subplots(1, 2, figsize=(7.1, 3.0), sharey=True)
+    yy = np.arange(len(order))
+    axs[0].barh(yy, off.loc[order, "b_e"], color=["#4e79a7" if v < 0 else "#e15759" for v in off.loc[order, "b_e"]])
+    axs[0].axvline(0, color="k", lw=0.6)
+    axs[0].set_yticks(yy); axs[0].set_yticklabels([LAB[e] for e in order])
+    axs[0].set_xlabel("Event offset $b_e$ (log-odds)")
+    axs[0].set_title("(a) Event landslide propensity", loc="left", fontweight="bold", fontsize=8)
+    for i, e in enumerate(order):
+        lo, md, hi = zs.loc[e, ["eo_q05", "eo_q50", "eo_q95"]]
+        axs[1].plot([lo, hi], [i, i], color="#e15759", lw=2.5, alpha=0.6, solid_capstyle="butt",
+                    label="HiPhyBoost zero-shot 90% interval" if i == 0 else None)
+        axs[1].scatter(md, i, color="#e15759", s=14, zorder=3)
+        axs[1].scatter(pc.loc[e, "e_over_o"], i, marker="*", color="k", s=30, zorder=4,
+                       label="PC-GBM point forecast" if i == 0 else None)
+    axs[1].axvline(1, color="k", lw=0.6, ls="--"); axs[1].set_xscale("log")
+    axs[1].set_xlabel("Predicted / observed landslide cells")
+    axs[1].set_title("(b) Zero-shot forecast of landslide total", loc="left", fontweight="bold", fontsize=8)
+    axs[1].legend(frameon=False, fontsize=6.5, loc="lower right")
+    fig.tight_layout()
+    save(fig, "fig8_offsets")
 
 
 def fig_shap():
@@ -136,6 +179,17 @@ def fig_shap():
 
 def fig_kaikoura():
     p = pd.read_parquet(os.path.join(R, "kaikoura_transfer_pred.parquet"))
+    title_b = "(b) PC-GBM trained on 8 other events"
+    hp = os.path.join(R, "hiphy_loeo_scores.parquet")
+    if os.path.exists(hp):
+        from numpy.polynomial.hermite_e import hermegauss
+        from scipy.special import expit
+        sc = pd.read_parquet(hp); m = sc[sc.event == "kaikoura2016"].m.values
+        off = pd.read_csv(os.path.join(R, "hiphy_loeo_offsets.csv")); off = off[off.target == "kaikoura2016"].iloc[0]
+        xg, wg = hermegauss(40); wg = wg / np.sqrt(2 * np.pi)
+        assert len(m) == len(p)
+        p["p_transfer"] = expit(m[:, None] + off.mu + off.tau * xg[None, :]) @ wg
+        title_b = "(b) HiPhyBoost zero-shot (8 other events)"
     s = 2000.0
     p["bx"] = np.floor(p.x / s); p["by"] = np.floor(p.y_utm / s)
     p["pw"] = p.p_transfer * p.w; p["yw"] = p.y * p.w
@@ -146,7 +200,7 @@ def fig_kaikoura():
     nx, ny = int(g.bx.max() - x0 + 1), int(g.by.max() - y0 + 1)
     fig, axs = plt.subplots(1, 3, figsize=(7.1, 2.9))
     vmax = np.nanpercentile(g.obs_d[g.obs_d > 0], 99)
-    for ax, col, t in zip(axs[:2], ["obs_d", "pred_d"], ["(a) Observed (Massey et al. inventory)", "(b) PC-GBM trained on 8 other events"]):
+    for ax, col, t in zip(axs[:2], ["obs_d", "pred_d"], ["(a) Observed (GNS inventory v2)", title_b]):
         A = np.full((ny, nx), np.nan)
         A[(g.by - y0).astype(int), (g.bx - x0).astype(int)] = g[col]
         im = ax.imshow(np.clip(A, 0.01, None), origin="lower", cmap="magma_r", norm=LogNorm(0.01, vmax),
@@ -167,9 +221,10 @@ def fig_kaikoura():
 
 
 if __name__ == "__main__":
-    which = sys.argv[1:] or ["loeo", "fewshot", "shap", "kaikoura", "reliability"]
+    which = sys.argv[1:] or ["loeo", "fewshot", "shap", "kaikoura", "offsets"]
     if "loeo" in which: fig_loeo()
     if "fewshot" in which: fig_fewshot()
     if "shap" in which: fig_shap()
     if "kaikoura" in which: fig_kaikoura()
+    if "offsets" in which: fig_offsets()
     if "reliability" in which: fig_reliability(X.load())

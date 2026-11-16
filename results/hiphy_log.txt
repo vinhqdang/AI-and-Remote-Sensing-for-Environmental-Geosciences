@@ -1,0 +1,2 @@
+events: ['aisen2007', 'cinchona2009', 'denali2002', 'iwate2008', 'kaikoura2016', 'niigata2004', 'northridge1994', 'palu2018', 'porgera2018'] rows: 2322648 T=3 rounds=400 reps=30 out=/home/user/AI-and-Remote-Sensing-for-Environmental-Geosciences/src/../results
+E4 aisen2007 tau=1.814 offsets: {'cinchona2009': 2.63, 'denali2002': -3.15, 'iwate2008': -0.05, 'kaikoura2016': -0.11, 'niigata2004': 1.74, 'northridge1994': 0.73, 'palu2018': -0.18, 'porgera2018': -1.62}

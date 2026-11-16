@@ -1,4 +1,4 @@
-\begin{table}[t]\centering\small
+\begin{table*}[t]\centering\small
 \caption{Leave-one-event-out transfer. ROC AUC on each held-out event for the five models trained on the other eight events (best transferred model in bold), the AUC of a local PC-GBM evaluated by 5~km spatial-block cross-validation within the event, and calibration of the transferred PC-GBM: the expected-to-observed ratio of landslide cells ($E/O$, ideal 1) and the calibration slope (ideal 1).}\label{tab:loeo}
 \resizebox{\textwidth}{!}{\begin{tabular}{lrrrrrrrr}\toprule
  & \multicolumn{5}{c}{Transferred (LOEO) AUC} & Local AUC & \multicolumn{2}{c}{PC-GBM calibration}\\
@@ -15,4 +15,4 @@ Porgera 2018 (PNG) & 0.885 & \textbf{0.892} & 0.847 & 0.876 & 0.872 & 0.934 & 8.
 Palu 2018 (ID) & 0.742 & 0.762 & 0.733 & \textbf{0.790} & 0.730 & 0.838 & 1.89 & 1.08\\
 \midrule Median & 0.763 & 0.764 & 0.750 & 0.790 & 0.805 & 0.838 & 1.50 & 1.07\\
 Minimum & 0.559 & 0.734 & 0.247 & 0.639 & 0.730 & 0.809 & & \\
-\bottomrule\end{tabular}}\end{table}
+\bottomrule\end{tabular}}\end{table*}

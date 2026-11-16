@@ -1,0 +1,67 @@
+\documentclass[ASNA,twocolumn]{USG}
+\usepackage{anyfontsize}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{longtable}
+\graphicspath{{./images/}{../../figures/}}
+\makeatletter
+% article-type banner without the open-access badge of the template sample
+\def\@@articletype{\rule[-4\p@]{4\p@}{15\p@}{\arttypefont\bf\uppercase{\letterspace to 1.15\naturalwidth{\@articletype}}}}
+\makeatother
+
+\specialissue{AI and Remote Sensing for Environmental Geosciences: Data-Driven Approaches to Geology, Environmental Processes and Natural Hazards}
+\articletype{ORIGINAL ARTICLE}
+\journal{New Zealand Journal of Geology and Geophysics}
+\volume{0}
+\copyyear{2026}
+\startpage{1}
+\articledoi{10.1002/0000}
+
+\begin{document}
+
+\title{Transferable coseismic landslide forecasting across the Pacific Rim with hierarchical physics-anchored boosting and selection-aware Bayesian updating}
+
+\author[1]{Quang-Vinh Dang}[https://orcid.org/0000-0002-3877-8024]
+\author[2]{Dat Le}[https://orcid.org/0009-0005-5038-8570]
+\author[3]{Minh Ngoc Dinh}[https://orcid.org/0000-0003-4026-6068]
+
+\authormark{DANG \textsc{et al.}}
+\titlemark{TRANSFERABLE COSEISMIC LANDSLIDE FORECASTING ACROSS THE PACIFIC RIM}
+
+\address[1]{\orgname{British University Vietnam, }\orgaddress{\state{Hung Yen, }\country{Vietnam}}}
+\address[2]{\orgdiv{Department of Science, Technology, and International Projects, }\orgname{Ho Chi Minh City University of Economics and Finance, }\orgaddress{\state{Ho Chi Minh City 700000, }\country{Vietnam}}}
+\address[3]{\orgdiv{Data Science and Information Technology, }\orgname{Millennia University, }\orgaddress{\state{Ho Chi Minh City, }\country{Vietnam}}}
+
+\corres{Quang-Vinh Dang (\email{vinh.dq4@buv.edu.vn})}
+
+\fundingInfo{This research received no specific grant from any funding agency.}
+
+\keywords{coseismic landslides | transfer learning | physics-informed machine learning | Bayesian updating | Newmark displacement | Kaik\={o}ura earthquake | Pacific Rim | ShakeMap}
+
+\abstract[ABSTRACT]{\input{../sections/abstract}}
+
+\maketitle
+
+\input{../sections/introduction}
+\input{../sections/data}
+\input{../sections/methods}
+\input{../sections/results}
+\input{../sections/discussion}
+\input{../sections/conclusions}
+
+\bmsubsection*{Author Contributions}
+\textbf{Quang-Vinh Dang}: conceptualisation, methodology, software, formal analysis, writing -- original draft. \textbf{Dat Le}: validation, investigation, writing -- review and editing. \textbf{Minh Ngoc Dinh}: methodology, validation, writing -- review and editing.
+
+\input{../sections/backmatter}
+
+\bibliography{../references}
+
+\onecolumn
+\appendix
+\input{../sections/supplement}
+
+\end{document}

@@ -230,3 +230,10 @@ manuscript/*.out
 manuscript/*.bbl
 manuscript/*.blg
 manuscript/*.synctex.gz
+manuscript/wiley/*.aux
+manuscript/wiley/*.log
+manuscript/wiley/*.out
+manuscript/wiley/*.blg
+manuscript/wiley/*.bbl
+manuscript/wiley/*.synctex.gz
+manuscript/wiley/box.eps

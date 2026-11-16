@@ -18,10 +18,10 @@ def t1():
         ev = EVENTS[k]
         rows.append(f"{ev['label'].replace('ō', '\\={o}').replace('é', "\\'{e}")} & {ev['mw']:.1f} & {i['area_km2']:,.0f} & {i['n_points_in_domain']:,} & "
                     f"{i['n_pos_cells']:,} & {100*i['prevalence']:.3f} & {i['pga_max']:.2f} & {i['pga_mean_pos']:.2f} \\\\")
-    s = ("\\begin{table}[t]\\centering\\small\n\\caption{The nine Pacific Rim earthquakes, their study domains and landslide statistics on the 30~m grid. "
+    s = ("\\begin{table*}[t]\\centering\\small\n\\caption{The nine Pacific Rim earthquakes, their study domains and landslide statistics on the 30~m grid. "
          "Prevalence is the percentage of domain cells that contain a landslide point. PGA values are from the USGS ShakeMap used as model input.}\\label{tab:events}\n"
          "\\resizebox{\\textwidth}{!}{\\begin{tabular}{lrrrrrrr}\\toprule\nEvent & M\\textsubscript{w} & Domain (km$^2$) & Landslides & Positive cells & Prevalence (\\%) & PGA$_{\\max}$ (g) & mean PGA at landslides (g)\\\\\\midrule\n"
-         + "\n".join(rows).replace(",", "\\,") + "\n\\bottomrule\\end{tabular}}\\end{table}\n")
+         + "\n".join(rows).replace(",", "\\,") + "\n\\bottomrule\\end{tabular}}\\end{table*}\n")
     open(os.path.join(T, "tab_events.tex"), "w").write(s)
 
 def lab(k):
@@ -46,11 +46,11 @@ def t2():
     mn = [tr[tr.model == m].auc.min() for m in MODELS]
     lines.append("\\midrule Median & " + " & ".join("%.3f" % x for x in med) + f" & {loc.auc.median():.3f} & {tr[tr.model=='PC-GBM'].e_over_o.median():.2f} & {tr[tr.model=='PC-GBM'].cal_slope.median():.2f}\\\\")
     lines.append("Minimum & " + " & ".join("%.3f" % x for x in mn) + f" & {loc.auc.min():.3f} & & \\\\")
-    s = ("\\begin{table}[t]\\centering\\small\n\\caption{Leave-one-event-out transfer. ROC AUC on each held-out event for the five models trained on the other eight events "
+    s = ("\\begin{table*}[t]\\centering\\small\n\\caption{Leave-one-event-out transfer. ROC AUC on each held-out event for the five models trained on the other eight events "
          "(best transferred model in bold), the AUC of a local PC-GBM evaluated by 5~km spatial-block cross-validation within the event, and calibration of the transferred PC-GBM: "
          "the expected-to-observed ratio of landslide cells ($E/O$, ideal 1) and the calibration slope (ideal 1).}\\label{tab:loeo}\n"
          "\\resizebox{\\textwidth}{!}{\\begin{tabular}{lrrrrrrrr}\\toprule\n & \\multicolumn{5}{c}{Transferred (LOEO) AUC} & Local AUC & \\multicolumn{2}{c}{PC-GBM calibration}\\\\\n"
-         "\\cmidrule(lr){2-6}\\cmidrule(lr){8-9}\nEvent & " + hdr + " & PC-GBM & $E/O$ & slope\\\\\\midrule\n" + "\n".join(lines) + "\n\\bottomrule\\end{tabular}}\\end{table}\n")
+         "\\cmidrule(lr){2-6}\\cmidrule(lr){8-9}\nEvent & " + hdr + " & PC-GBM & $E/O$ & slope\\\\\\midrule\n" + "\n".join(lines) + "\n\\bottomrule\\end{tabular}}\\end{table*}\n")
     open(os.path.join(T, "tab_loeo.tex"), "w").write(s)
 
 
