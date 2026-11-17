@@ -24,7 +24,7 @@ Physics-based, logistic and machine-learning models rank hillslopes reasonably w
 
 Main results:
 - Across 38 earthquakes, HiPhyBoost transferred better than a physics-constrained baseline in 29 events, including 21 of 29 events not used in its development. It reached AUC 0.92 for Kaikōura without New Zealand training data.
-- With one to ten mapped tiles, it predicted the remaining landslide total within a median factor of about 1.5, with much better calibrated uncertainty than standard recalibration.
+- With one to ten mapped tiles, it predicted the remaining landslide total within a median factor of about 1.5, and its uncertainty intervals were far better calibrated than those of a Bayesian update that treats pixels as independent.
 
 The geoscientific contribution is the interpretation of the event offsets as each earthquake's landslide propensity relative to generic slope mechanics. We examine how they relate to antecedent wetness, ShakeMap quality, faulting style and inventory practice. The manuscript closes with implications for scenario forecasting of Alpine Fault and Hikurangi earthquakes and for rapid-mapping strategies in Aotearoa New Zealand.
 
